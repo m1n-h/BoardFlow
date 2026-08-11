@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +38,9 @@ public class HttpResponse {
 
                 byte[] body = in.readAllBytes();
 
-                addHeader("Content-Type", "text/html;charset=utf-8");
+                String contentType = getContentType(path);
+
+                addHeader("Content-Type", contentType);
                 addHeader("Content-Length", String.valueOf(body.length));
 
                 sendResponse("200 OK", body);
@@ -86,5 +90,27 @@ public class HttpResponse {
         for (Map.Entry<String, String> header : headers.entrySet()) {
             dos.writeBytes(header.getKey() + ": " + header.getValue() + "\r\n");
         }
+    }
+
+    private String getContentType(String path) {
+        try {
+            String mimeType = Files.probeContentType(Path.of(path));
+            if (mimeType != null) {
+                if (mimeType.startsWith("text/")) {
+                    return mimeType + "; charset=utf-8";
+                }
+                return mimeType;
+            }
+        } catch (IOException ignored) {}
+
+        if (path.endsWith(".css")) return "text/css; charset=utf-8";
+        if (path.endsWith(".js")) return "text/javascript; charset=utf-8";
+        if (path.endsWith(".png")) return "image/png;";
+        if (path.endsWith(".gif")) return "image/gif;";
+        if (path.endsWith(".jpg")) return "image/jpg;";
+        if (path.endsWith(".jpeg")) return "image/jpeg;";
+        if (path.endsWith(".ico")) return "image/x-icon;";
+
+        return "text/html;charset=utf-8";
     }
 }
