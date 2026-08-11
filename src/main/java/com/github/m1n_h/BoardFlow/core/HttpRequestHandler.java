@@ -1,6 +1,7 @@
 package com.github.m1n_h.BoardFlow.core;
 
 import com.github.m1n_h.BoardFlow.http.HttpRequest;
+import com.github.m1n_h.BoardFlow.http.HttpResponse;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -34,9 +35,17 @@ public class HttpRequestHandler implements Runnable {
         );
 
         HttpRequest request = new HttpRequest(reader);
-        String path = request.getPath();
+        HttpResponse response = new HttpResponse(socket.getOutputStream());
 
-        if (path == null || path.equals("/")) path = "/index.html";
+        String path = request.getPath();
+        String redirectTest = "/redirect-test";
+
+        if (redirectTest.equals(path)) {
+            response.sendRedirect("/index.html");
+            return;
+        }
+
+        response.forward(path);
 
         String resourcesPath = "static" + path;
 
