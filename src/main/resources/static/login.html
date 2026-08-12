@@ -1,10 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{{header}}
+
+<main id="login-main" class="mt-4 mb-4">
+    <div class="container">
+        <h2>로그인</h2>
+
+        <div id="login-box" class="p-4 border rounded">
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <div class="input-group mb-3">
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text"
+                                   class="form-control"
+                                   id="user-id"
+                                   name="user-id"
+                                   placeholder=""
+                                   required
+                            />
+                        </div>
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text"
+                                   class="form-control"
+                                   id="user-pw"
+                                   name="user-pw"
+                                   placeholder=""
+                                   required
+                            />
+                        </div>
+
+                        <button type="submit" class="text-bold">로그인</button>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+{{footer}}
