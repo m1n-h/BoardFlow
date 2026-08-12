@@ -38,6 +38,8 @@ public class HttpResponse {
 
                 byte[] body = in.readAllBytes();
 
+                if (path.endsWith(".html")) body = processTemplate(body);
+
                 String contentType = getContentType(path);
 
                 addHeader("Content-Type", contentType);
@@ -113,4 +115,31 @@ public class HttpResponse {
 
         return "text/html;charset=utf-8";
     }
+
+    private byte[] processTemplate(byte[] body) {
+        String content = new String(body, StandardCharsets.UTF_8);
+
+        if (content.contains("{{header}}")) {
+            String headerContent = readStaticFile("/common/header.html");
+            content = content.replace("{{header}}", headerContent);
+        }
+
+        if (content.contains("{{footer}}")) {
+            String footerContent = readStaticFile("/common/footer.html");
+            content = content.replace("{{footer}}", footerContent);
+        }
+
+        return content.getBytes(StandardCharsets.UTF_8);
+    }
+
+    private String readStaticFile(String path) {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream("static" + path)) {
+            if (in != null) return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
+    }
+
 }

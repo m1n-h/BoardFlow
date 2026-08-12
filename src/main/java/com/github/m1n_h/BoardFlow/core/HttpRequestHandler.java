@@ -37,45 +37,7 @@ public class HttpRequestHandler implements Runnable {
         HttpRequest request = new HttpRequest(reader);
         HttpResponse response = new HttpResponse(socket.getOutputStream());
 
-        String path = request.getPath();
-        String redirectTest = "/redirect-test";
-
-        if (redirectTest.equals(path)) {
-            response.sendRedirect("/index.html");
-            return;
-        }
-
-        response.forward(path);
-
-        String resourcesPath = "static" + path;
-
-        OutputStream output = socket.getOutputStream();
-
-        try (InputStream in = HttpRequestHandler.class.getClassLoader().getResourceAsStream(resourcesPath)) {
-            if (in == null) {
-                String errorMsg = "<h1>404 Not Found</h1><p>요청하신 파일을 찾을 수 없습니다: " + path + "</p>";
-                byte[] errorBytes = errorMsg.getBytes(StandardCharsets.UTF_8);
-
-                output.write("HTTP/1.1 404 Not Found\r\n".getBytes(StandardCharsets.UTF_8));
-                output.write("Content-Type: text/html; charset=UTF-8\r\n".getBytes(StandardCharsets.UTF_8));
-                output.write(("Content-Length: " + errorBytes.length + "\r\n").getBytes(StandardCharsets.UTF_8));
-                output.write("Connection: close\r\n".getBytes(StandardCharsets.UTF_8));
-                output.write("\r\n".getBytes(StandardCharsets.UTF_8));
-                output.write(errorBytes);
-                output.flush();
-                return;
-            }
-
-            byte[] bodyBytes = in.readAllBytes();
-
-            output.write("HTTP/1.1 200 OK\r\n".getBytes(StandardCharsets.UTF_8));
-            output.write("Content-Type: text/html; charset=UTF-8\r\n".getBytes(StandardCharsets.UTF_8));
-            output.write(("Content-Length: " + bodyBytes.length + "\r\n").getBytes(StandardCharsets.UTF_8));
-            output.write("Connection: close\r\n".getBytes(StandardCharsets.UTF_8));
-            output.write("\r\n".getBytes(StandardCharsets.UTF_8));
-            output.write(bodyBytes);
-            output.flush();
-        }
+        Router.route(request, response);
 
     }
 }
