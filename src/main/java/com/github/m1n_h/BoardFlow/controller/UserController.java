@@ -11,8 +11,23 @@ public class UserController implements Controller {
         if ("GET".equalsIgnoreCase(method)) {
             response.forward("/login.html");
         } else if ("POST".equalsIgnoreCase(method)) {
-            System.out.println("[Login Success] 사용자 로그인 요청 처리");
+            handleLogin(request, response);
+        }
+    }
+
+    private void handleLogin(HttpRequest request, HttpResponse response) {
+        String businessId = "admin";
+        String businessPw = "123456";
+
+        String userId = request.getParam("user-id");
+        String userPw = request.getParam("user-pw");
+
+        if (businessId.equals(userId) && businessPw.equals(userPw)) {
+            System.out.println("로그인 성공!");
             response.sendRedirect("/index.html");
+        } else {
+            System.out.println("[로그인 실패] 아이디 및 비밀번호를 다시 입력해주세요.");
+            response.sendRedirect("/login");
         }
     }
 }

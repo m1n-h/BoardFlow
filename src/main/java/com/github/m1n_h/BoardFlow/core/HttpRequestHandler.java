@@ -24,6 +24,7 @@ public class HttpRequestHandler implements Runnable {
             handleClient(socket);
         } catch (Exception e) {
             System.err.println("[Error] 클라이언트 요청 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
         }
         System.out.println("Current Thread: " + Thread.currentThread().getName());
     }
