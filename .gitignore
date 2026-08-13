@@ -1,0 +1,30 @@
+# === IntelliJ IDEA / JetBrains ===
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# === Java / Build Output ===
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+build/
+target/
+
+# === Operating System Files ===
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# === Log & Temporary Files ===
+*.log
+*.tmp
+*.temp
