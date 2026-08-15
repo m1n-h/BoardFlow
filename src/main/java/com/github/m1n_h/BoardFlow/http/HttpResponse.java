@@ -80,6 +80,14 @@ public class HttpResponse {
         }
     }
 
+    public void setCookie(String key, String value, String path) {
+        addHeader("Set-Cookie", key + "=" + value + "; Path=" + path + "; HttpOnly");
+    }
+
+    public void deleteCookie(String key, String path) {
+        addHeader("Set-Cookie", key + "=; Path=" + path + "; Max-Age=0; HttpOnly");
+    }
+
     private void sendResponse(String status, byte[] body) throws IOException {
         dos.writeBytes("HTTP/1.1 " + status + "\r\n");
         processHeaders();

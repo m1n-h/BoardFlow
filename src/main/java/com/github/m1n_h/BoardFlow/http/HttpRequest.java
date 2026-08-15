@@ -14,6 +14,7 @@ public class HttpRequest {
     private String version;
     private final Map<String, String> headers = new HashMap<>();
     private final Map<String, String> params = new HashMap<>();
+    private final Map<String, String> cookies = new HashMap<>();
 
     public HttpRequest(BufferedReader reader) throws IOException {
         String requestLine = reader.readLine();
@@ -96,10 +97,22 @@ public class HttpRequest {
         }
     }
 
+    private void parseCookies() {
+        String cookiesHeader = getHeader("cookie");
+        if (cookiesHeader == null || cookiesHeader.isEmpty()) return;
+
+        String[] pairs = cookiesHeader.split(";");
+        for (String pair : pairs) {
+            String[] keyValue = pair.trim().split("=", 2);
+            if (keyValue.length == 2) cookies.put(keyValue[0].trim(), keyValue[1].trim());
+        }
+    }
+
     public String getMethod() { return method; }
     public String getPath() { return path; }
     public String getHeader(String name) { return headers.get(name.toLowerCase()); }
     public String getParam(String name) { return params.get(name); }
+    public String getCookie(String name) { return cookies.get(name); }
 
     @Override
     public String toString() {

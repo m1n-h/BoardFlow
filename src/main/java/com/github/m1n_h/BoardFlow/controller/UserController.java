@@ -1,33 +1,53 @@
 package com.github.m1n_h.BoardFlow.controller;
 
+import com.github.m1n_h.BoardFlow.db.DataBase;
 import com.github.m1n_h.BoardFlow.http.HttpRequest;
 import com.github.m1n_h.BoardFlow.http.HttpResponse;
+import com.github.m1n_h.BoardFlow.http.SessionManager;
+import com.github.m1n_h.BoardFlow.model.User;
+
+import java.io.IOException;
 
 public class UserController implements Controller {
 
     @Override
-    public void process(HttpRequest request, HttpResponse response) {
+    public void process(HttpRequest request, HttpResponse response) throws IOException {
+        String path = request.getPath();
         String method = request.getMethod();
+
         if ("GET".equalsIgnoreCase(method)) {
             response.forward("/login.html");
-        } else if ("POST".equalsIgnoreCase(method)) {
+        } else if ("POST".equalsIgnoreCase(method) && "/login".equals(path)) {
             handleLogin(request, response);
+        } else if ("/logout".equals(path)) {
+            handleLogout(request, response);
         }
     }
 
-    private void handleLogin(HttpRequest request, HttpResponse response) {
-        String businessId = "admin";
-        String businessPw = "123456";
-
+    private void handleLogin(HttpRequest request, HttpResponse response) throws IOException {
         String userId = request.getParam("user-id");
         String userPw = request.getParam("user-pw");
 
-        if (businessId.equals(userId) && businessPw.equals(userPw)) {
-            System.out.println("로그인 성공!");
+        User user = DataBase.findUserById(userId);
+
+        if (user != null && user.getUserPw().equals(userPw)) {
+            String sessionId = SessionManager.createSession(user);
+            response.setCookie("sid", sessionId, "/");
             response.sendRedirect("/index.html");
         } else {
-            System.out.println("[로그인 실패] 아이디 및 비밀번호를 다시 입력해주세요.");
-            response.sendRedirect("/login");
+            response.sendRedirect("/user/login_failed.html");
         }
     }
+
+    private void handleLogout(HttpRequest request, HttpResponse response) throws IOException {
+        String sessionId = request.getCookie("sid");
+
+        if (sessionId != null) {
+            SessionManager.removeSession(sessionId);
+            response.deleteCookie("sid", "/");
+        }
+
+        response.sendRedirect("/index.html");
+    }
+
 }
