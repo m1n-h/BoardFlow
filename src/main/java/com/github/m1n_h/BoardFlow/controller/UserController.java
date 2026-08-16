@@ -4,9 +4,11 @@ import com.github.m1n_h.BoardFlow.db.DataBase;
 import com.github.m1n_h.BoardFlow.http.HttpRequest;
 import com.github.m1n_h.BoardFlow.http.HttpResponse;
 import com.github.m1n_h.BoardFlow.http.SessionManager;
+import com.github.m1n_h.BoardFlow.http.TemplateEngine;
 import com.github.m1n_h.BoardFlow.model.User;
 
 import java.io.IOException;
+import java.util.Collection;
 
 public class UserController implements Controller {
 
@@ -48,6 +50,23 @@ public class UserController implements Controller {
         }
 
         response.sendRedirect("/index.html");
+    }
+
+    private void handleUserList(HttpRequest request, HttpResponse response) throws IOException {
+        String sessionId = request.getCookie("sid");
+        User loginUser = (User) SessionManager.getSession(sessionId);
+
+        if (loginUser == null) {
+            response.sendRedirect("/user/login.html");
+            return;
+        }
+
+        String html = FileUtil.readFileAsString("static/user/list.html");
+
+        Collection<User> users = DataBase.findAll();
+        String renderHtml = TemplateEngine.renderUserList(html, users);
+
+        response.sendHtml(renderHtml);
     }
 
 }

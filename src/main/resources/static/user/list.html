@@ -1,0 +1,30 @@
+{{header}}
+
+<main id="user-list" class="mt-4 mb-4">
+    <div class="container">
+        <h2>회원목록</h2>
+        <table class="table table-hover border">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>아이디</th>
+                <th>이름</th>
+                <th>이메일</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {{#users}}
+            <tr>
+                <td>{{index}}</td>
+                <td>{{id}}</td>
+                <td>{{name}}</td>
+                <td>{{email}}</td>
+            </tr>
+            {{/users}}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+{{footer}}
