@@ -66,6 +66,15 @@ public class HttpResponse {
         }
     }
 
+    public void sendHtml(String htmlContent) throws IOException {
+        byte[] body = htmlContent.getBytes(StandardCharsets.UTF_8);
+
+        addHeader("Content-Type", "text/html; charset=utf-8");
+        addHeader("Content-Length", String.valueOf(body.length));
+
+        sendResponse("200", body);
+    }
+
     public void forward404(String path) {
         try {
             String errorMsg = "<h1>404 Not Found</h1><p>요청하신 파일을 찾을 수 없습니다: " + path + "</p>";

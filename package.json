@@ -1,0 +1,26 @@
+{
+  "name": "boardflow",
+  "version": "1.0.0",
+  "description": "> **Spring Boot, Tomcat 등 외부 프레임워크나 서블릿 컨테이너 없이, Pure Java와 Socket API만으로 직접 구축한 경량 HTTP 웹 서버 엔진 프로젝트입니다.**  \r > 웹 프레임워크의 내부 동작 원리(HTTP Protocol, Thread Management, I/O)를 깊이 있게 이해하고, 향후 구축할 **게시판·스케줄링·회원 인증 서비스**의 기반 인프라를 직접 설계합니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:ts": "tsc",
+    "watch:ts": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m1n-h/BoardFlow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/m1n-h/BoardFlow/issues"
+  },
+  "homepage": "https://github.com/m1n-h/BoardFlow#readme",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}

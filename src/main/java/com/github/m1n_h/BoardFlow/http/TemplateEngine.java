@@ -1,20 +1,36 @@
 package com.github.m1n_h.BoardFlow.http;
 
 import com.github.m1n_h.BoardFlow.model.User;
+import com.github.m1n_h.BoardFlow.util.FileUtil;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
 public class TemplateEngine {
 
-    public static String render(String html, Map<String, String> model) {
+    public static String render(String html, Map<String, String> model) throws IOException {
         if (html == null || model == null) return html;
 
         String result = html;
-        for (Map.Entry<String, String> entry : model.entrySet()) {
-            String placeholder = "{{" + entry.getKey() + "}}";
-            result = result.replace(placeholder, entry.getValue() != null ? entry.getValue() : "");
+
+        if (result.contains("{{header}}")) {
+            String headerContent = FileUtil.readFileAsString("static/common/header.html");
+            result = result.replace("{{header}}", headerContent);
         }
+
+        if (result.contains("{{footer}}")) {
+            String footerContent = FileUtil.readFileAsString("static/common/footer.html");
+            result = result.replace("{{footer}}", footerContent);
+        }
+
+        if (model != null) {
+            for (Map.Entry<String, String> entry : model.entrySet()) {
+                String placeholder = "{{" + entry.getKey() + "}}";
+                result = result.replace(placeholder, entry.getValue() != null ? entry.getValue() : "");
+            }
+        }
+
         return result;
     }
 
