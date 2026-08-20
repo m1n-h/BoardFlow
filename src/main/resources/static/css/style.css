@@ -1,4 +1,29 @@
-body {
-    background-color: #f4f6f9;
-    color: #333;
+/* common */
+.container { width: 1280px; margin: 0 auto; }
+
+/* Header */
+
+
+/* Footer */
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 24px;
+    border-radius: 8px;
+    position: relative;
+    min-width: 320px;
 }

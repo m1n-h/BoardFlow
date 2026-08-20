@@ -1,0 +1,115 @@
+<div id="authModal" class="modal-overlay d-none">
+    <div class="modal-content">
+        <button type="button" class="modal-close" id="closeModalBtn">&times;</button>
+
+        <!-- 로그인 폼 -->
+        <form id="loginForm" class="auth-form">
+            <h2>로그인</h2>
+
+            <div class="form-group">
+                <div class="input-group mb-3">
+
+                    <div class="input-group-prepend">
+                        <label for="user-id" class="input-group-text">아이디</label>
+                        <input type="text"
+                               class="form-control"
+                               id="user-id"
+                               name="user-id"
+                               placeholder=""
+                               required
+                        />
+                    </div>
+
+                    <div class="input-group-prepend">
+                        <label for="user-pw" class="input-group-text">비밀번호</label>
+                        <input type="text"
+                               class="form-control"
+                               id="user-pw"
+                               name="user-pw"
+                               placeholder=""
+                               required
+                        />
+                    </div>
+
+                    <button type="submit" class="text-bold">로그인</button>
+
+                </div>
+            </div>
+        </form>
+
+        <!-- 회원가입 폼 -->
+        <form id="joinForm" class="auth-form">
+            <h2>회원가입</h2>
+
+            <div class="form-group">
+                <div class="input-group mb-3">
+
+                    <div class="input-group-prepend">
+                        <label for="user-id" class="input-group-text">이름</label>
+                        <input type="text"
+                               class="form-control"
+                               id="join-user-name"
+                               name="user-name"
+                               placeholder=""
+                               required
+                        />
+                    </div>
+
+                    <div class="input-group-prepend">
+                        <label for="user-id" class="input-group-text">이메일</label>
+                        <input type="text"
+                               class="form-control"
+                               id="join-user-email"
+                               name="user-email"
+                               placeholder=""
+                               required
+                        />
+                        <span class="text-bold ms-2 me-2">@</span>
+                        <select id="join-user-domain"
+                                name="user-domain"
+                                class="form-control"
+                        >
+                            <option value="">선택</option>
+                            <option value="naver.com">naver.com</option>
+                            <option value="gmail.com">gmail.com</option>
+                            <option value="etcDomain">직접 입력</option>
+                        </select>
+
+                        <input type="text"
+                               class="form-control d-none"
+                               id="etc-domain"
+                               name="etc-domain"
+                               placeholder=""
+                               required
+                        />
+                    </div>
+
+                    <div class="input-group-prepend">
+                        <label for="user-id" class="input-group-text">아이디</label>
+                        <input type="text"
+                               class="form-control"
+                               id="join-user-id"
+                               name="user-id"
+                               placeholder=""
+                               required
+                        />
+                    </div>
+
+                    <div class="input-group-prepend">
+                        <label for="user-pw" class="input-group-text">비밀번호</label>
+                        <input type="text"
+                               class="form-control"
+                               id="join-user-pw"
+                               name="user-pw"
+                               placeholder=""
+                               required
+                        />
+                    </div>
+
+                    <button type="submit" class="text-bold">회원가입</button>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

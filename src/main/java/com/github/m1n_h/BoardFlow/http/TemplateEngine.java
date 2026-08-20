@@ -24,6 +24,11 @@ public class TemplateEngine {
             result = result.replace("{{footer}}", footerContent);
         }
 
+        if (result.contains("{{modal}}")) {
+            String modalContent = FileUtil.readFileAsString("static/common/modal.html");
+            result = result.replace("{{modal}}", modalContent);
+        }
+
         if (model != null) {
             for (Map.Entry<String, String> entry : model.entrySet()) {
                 String placeholder = "{{" + entry.getKey() + "}}";
