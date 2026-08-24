@@ -1,64 +1,50 @@
 /// <reference lib="dom" />
 /// <reference lib="es2015" />
-
 export class AuthModal {
-    private modal: HTMLElement | null;
-    private loginForm: HTMLFormElement | null;
-    private joinForm: HTMLFormElement | null;
-
     constructor() {
         this.modal = document.getElementById("authModal");
-        this.loginForm = document.getElementById("loginForm") as HTMLFormElement | null;
-        this.joinForm = document.getElementById("joinForm") as HTMLFormElement | null;
-
+        this.loginForm = document.getElementById("loginForm");
+        this.joinForm = document.getElementById("joinForm");
         this.initEvents();
     }
-
-    private initEvents(): void {
+    initEvents() {
         const loginBtn = document.getElementById("loginBtn");
         const joinBtn = document.getElementById("joinBtn");
         const closeBtn = document.getElementById("closeModalBtn");
-
         loginBtn?.addEventListener("click", () => this.openModal("login"));
         joinBtn?.addEventListener("click", () => this.openModal("join"));
         closeBtn?.addEventListener("click", () => this.closeModal());
-
-        this.modal?.addEventListener("click", (e: MouseEvent) => {
-            if (e.target === this.modal) this.closeModal();
+        this.modal?.addEventListener("click", (e) => {
+            if (e.target === this.modal)
+                this.closeModal();
         });
-
-        this.loginForm?.addEventListener("submit", (e: Event) => this.handleSubmit(e, "/login"));
-        this.joinForm?.addEventListener("submit", (e: Event) => this.handleSubmit(e, "/join"));
+        this.loginForm?.addEventListener("submit", (e) => this.handleSubmit(e, "/login"));
+        this.joinForm?.addEventListener("submit", (e) => this.handleSubmit(e, "/join"));
     }
-
-    public openModal(type: "login" | "join"): void {
-        if (!this.modal) return;
-
+    openModal(type) {
+        if (!this.modal)
+            return;
         this.modal.classList.remove("d-none");
-
         if (type === "login") {
             this.loginForm?.classList.remove("d-none");
             this.joinForm?.classList.add("d-none");
-        } else {
+        }
+        else {
             this.joinForm?.classList.remove("d-none");
             this.loginForm?.classList.add("d-none");
         }
     }
-
-    public closeModal(): void {
+    closeModal() {
         this.modal?.classList.add("d-none");
     }
-
-    private async handleSubmit(e: Event, url: string): Promise<void> {
+    async handleSubmit(e, url) {
         e.preventDefault();
-        const form = e.target as HTMLFormElement;
+        const form = e.target;
         const formData = new FormData(form);
         const bodyParams = new URLSearchParams();
-
         formData.forEach((value, key) => {
             bodyParams.append(key, value.toString());
         });
-
         try {
             const response = await fetch(url, {
                 method: "POST",
@@ -67,14 +53,15 @@ export class AuthModal {
                 },
                 body: bodyParams,
             });
-
             if (response.ok) {
                 this.closeModal();
                 window.location.reload();
-            } else {
+            }
+            else {
                 alert("처리 중 오류가 발생했습니다.");
             }
-        } catch (error) {
+        }
+        catch (error) {
             console.error("Fetch Error: " + error);
             alert("서버 통신 실패");
         }

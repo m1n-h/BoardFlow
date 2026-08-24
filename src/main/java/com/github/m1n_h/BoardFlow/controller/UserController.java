@@ -24,6 +24,8 @@ public class UserController implements Controller {
             handleLogin(request, response);
         } else if ("/logout".equals(path)) {
             handleLogout(request, response);
+        } else if ("POST".equalsIgnoreCase(method) && "/join".equals(path)) {
+            handleJoin(request, response);
         }
     }
 
@@ -68,6 +70,18 @@ public class UserController implements Controller {
         String renderHtml = TemplateEngine.renderUserList(html, users);
 
         response.sendHtml(renderHtml);
+    }
+
+    private void handleJoin(HttpRequest request, HttpResponse response) throws IOException {
+        String userId = request.getParam("user-id");
+        String userPw = request.getParam("user-pw");
+        String userName = request.getParam("user-name");
+        String userEmail = request.getParam("user-email");
+
+        User user = new User(userId, userPw, userName, userEmail);
+        DataBase.addUser(user);
+
+        response.sendRedirect("/");
     }
 
 }
