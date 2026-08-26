@@ -18,10 +18,15 @@ export class AuthModal {
             if (e.target === this.modal)
                 this.closeModal();
         });
-        this.loginForm?.addEventListener("submit", (e) => this.handleSubmit(e, "/login"));
+        this.loginForm?.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const targetForm = e.currentTarget;
+            this.handleSubmit(targetForm, "/login");
+        });
         this.joinForm?.addEventListener("submit", (e) => {
             e.preventDefault();
-            this.handleSubmit(e, "/join");
+            const targetForm = e.currentTarget;
+            this.handleSubmit(targetForm, "/join");
         });
     }
     openModal(type) {
@@ -39,10 +44,10 @@ export class AuthModal {
     }
     closeModal() {
         this.modal?.classList.add("d-none");
+        this.joinForm?.reset();
+        this.loginForm?.reset();
     }
-    async handleSubmit(e, url) {
-        e.preventDefault();
-        const form = (e.currentTarget || e.target);
+    async handleSubmit(form, url) {
         if (!form)
             return;
         const formData = new FormData(form);
@@ -59,9 +64,16 @@ export class AuthModal {
                 body: bodyParams.toString(),
             });
             if (response.ok) {
-                alert("성공적으로 처리 되었습니다.");
-                this.closeModal();
-                window.location.reload();
+                if (url.includes("join")) {
+                    alert("회원가입이 정상적으로 처리 되었습니다!");
+                    this.resetForm(form);
+                    this.switchToLoginTab();
+                }
+                else if (url.includes("login")) {
+                    alert("로그인 성공!");
+                    this.closeModal();
+                    window.location.reload();
+                }
             }
             else {
                 const errorText = await response.text();
@@ -73,5 +85,12 @@ export class AuthModal {
             console.error("Fetch Error: " + error);
             alert("서버 통신 실패");
         }
+    }
+    switchToLoginTab() {
+        this.joinForm?.classList.add("d-none");
+        this.loginForm?.classList.remove("d-none");
+    }
+    resetForm(form) {
+        form.reset();
     }
 }
