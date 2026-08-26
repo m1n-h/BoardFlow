@@ -18,11 +18,11 @@ public class UserController implements Controller {
         String path = request.getPath();
         String method = request.getMethod();
 
-        if ("GET".equalsIgnoreCase(method) && "/user/login".equals(path)) {
+        if ("GET".equalsIgnoreCase(method) && ("/login".equals(path) || "/user/login".equals(path))) {
             response.forward("/user/login.html");
-        } else if ("POST".equalsIgnoreCase(method) && "/login".equals(path)) {
+        } else if ("POST".equalsIgnoreCase(method) && ("/login".equals(path) || "/user/login".equals(path))) {
             handleLogin(request, response);
-        } else if ("/logout".equals(path)) {
+        } else if (("/logout".equals(path) || "/user/logout".equals(path))) {
             handleLogout(request, response);
         } else if ("POST".equalsIgnoreCase(method) && ("/join".equals(path) || "/user/join".equals(path))) {
             handleJoin(request, response);
@@ -38,9 +38,9 @@ public class UserController implements Controller {
         if (user != null && user.getUserPw().equals(userPw)) {
             String sessionId = SessionManager.createSession(user);
             response.setCookie("sid", sessionId, "/");
-            response.sendRedirect("/");
+            response.sendHtml("SUCCESS");
         } else {
-            response.sendRedirect("/user/login_failed.html");
+            response.sendHtml("FAIL");
         }
     }
 

@@ -64,15 +64,21 @@ export class AuthModal {
                 body: bodyParams.toString(),
             });
             if (response.ok) {
+                const text = await response.text();
                 if (url.includes("join")) {
                     alert("회원가입이 정상적으로 처리 되었습니다!");
                     this.resetForm(form);
                     this.switchToLoginTab();
                 }
                 else if (url.includes("login")) {
-                    alert("로그인 성공!");
-                    this.closeModal();
-                    window.location.reload();
+                    if (text.includes("SUCCESS")) {
+                        alert("로그인 성공!");
+                        this.closeModal();
+                        window.location.reload();
+                    }
+                    else {
+                        alert("아이디 또는 비밀번호가 일치하지 않습니다.");
+                    }
                 }
             }
             else {
