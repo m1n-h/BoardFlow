@@ -16,9 +16,17 @@ public class Router {
 
     static {
         MainController mainController = new MainController();
+        UserController userController = new UserController();
+
         mappings.put("/", mainController);
         mappings.put("/index.html", mainController);
-        mappings.put("/login", new UserController());
+
+        mappings.put("/login", userController);
+        mappings.put("/join", userController);
+        mappings.put("/logout", userController);
+        mappings.put("/user/login", userController);
+        mappings.put("/user/list", userController);
+
         //mappings.put("/board", new BoardController());
         //mappings.put("/schedule", new ScheduleController());
     }

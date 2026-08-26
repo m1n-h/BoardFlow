@@ -18,13 +18,13 @@ public class UserController implements Controller {
         String path = request.getPath();
         String method = request.getMethod();
 
-        if ("GET".equalsIgnoreCase(method)) {
-            response.forward("/login.html");
+        if ("GET".equalsIgnoreCase(method) && "/user/login".equals(path)) {
+            response.forward("/user/login.html");
         } else if ("POST".equalsIgnoreCase(method) && "/login".equals(path)) {
             handleLogin(request, response);
         } else if ("/logout".equals(path)) {
             handleLogout(request, response);
-        } else if ("POST".equalsIgnoreCase(method) && "/join".equals(path)) {
+        } else if ("POST".equalsIgnoreCase(method) && ("/join".equals(path) || "/user/join".equals(path))) {
             handleJoin(request, response);
         }
     }
@@ -38,7 +38,7 @@ public class UserController implements Controller {
         if (user != null && user.getUserPw().equals(userPw)) {
             String sessionId = SessionManager.createSession(user);
             response.setCookie("sid", sessionId, "/");
-            response.sendRedirect("/index.html");
+            response.sendRedirect("/");
         } else {
             response.sendRedirect("/user/login_failed.html");
         }
@@ -52,7 +52,7 @@ public class UserController implements Controller {
             response.deleteCookie("sid", "/");
         }
 
-        response.sendRedirect("/index.html");
+        response.sendRedirect("/");
     }
 
     private void handleUserList(HttpRequest request, HttpResponse response) throws IOException {
@@ -76,12 +76,20 @@ public class UserController implements Controller {
         String userId = request.getParam("user-id");
         String userPw = request.getParam("user-pw");
         String userName = request.getParam("user-name");
-        String userEmail = request.getParam("user-email");
+
+        String email = request.getParam("user-email");
+        String domain = request.getParam("user-domain");
+
+        if (domain == null || domain.trim().isEmpty() || "etc".equals(domain)) domain = request.getParam("etc-domain");
+        if (domain == null) domain = "";
+
+        String userEmail = (email != null ? email : "") + "@" + domain;
 
         User user = new User(userId, userPw, userName, userEmail);
         DataBase.addUser(user);
 
-        response.sendRedirect("/");
+//        response.sendRedirect("/");
+        response.sendHtml("SUCCESS");
     }
 
 }

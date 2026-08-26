@@ -20,12 +20,19 @@ public class HttpRequestHandler implements Runnable {
 
     @Override
     public void run() {
-        try (Socket socket = this.socket) {
+        try {
             handleClient(socket);
         } catch (Exception e) {
-            System.err.println("[Error] 클라이언트 요청 중 오류 발생: " + e.getMessage());
+            System.out.println("[Error] 클라이언트 요청 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            try {
+                if (socket != null && !socket.isClosed()) socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
+
         System.out.println("Current Thread: " + Thread.currentThread().getName());
     }
 
@@ -35,10 +42,11 @@ public class HttpRequestHandler implements Runnable {
                 new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8)
         );
 
+        OutputStream out = socket.getOutputStream();
+
         HttpRequest request = new HttpRequest(reader);
-        HttpResponse response = new HttpResponse(socket.getOutputStream());
+        HttpResponse response = new HttpResponse(out);
 
         Router.route(request, response);
-
     }
 }

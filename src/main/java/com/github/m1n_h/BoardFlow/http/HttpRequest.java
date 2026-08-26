@@ -18,14 +18,16 @@ public class HttpRequest {
 
     public HttpRequest(BufferedReader reader) throws IOException {
         String requestLine = reader.readLine();
-        if (requestLine == null || requestLine.isEmpty()) return;
+        if (requestLine == null || requestLine.trim().isEmpty()) return;
 
         String[] tokens = requestLine.split(" ");
-        this.method = tokens[0];
-        parseUrlAndQueryString(tokens[1]);
+        if (tokens.length >= 2) {
+            this.method = tokens[0];
+            parseUrlAndQueryString(tokens[1]);
+        }
 
         String line;
-        while ((line = reader.readLine()) != null && !line.isEmpty()) {
+        while ((line = reader.readLine()) != null && !line.trim().isEmpty()) {
             int index = line.indexOf(":");
             if (index > 0) {
                 String headerName = line.substring(0, index).trim().toLowerCase();
@@ -33,6 +35,8 @@ public class HttpRequest {
                 headers.put(headerName, headerValue);
             }
         }
+
+        parseCookies();
 
         if ("POST".equalsIgnoreCase(this.method)) parseBody(reader);
     }
@@ -83,17 +87,28 @@ public class HttpRequest {
         for (String pair : pairs) {
             if (pair.isEmpty()) continue;
 
-            int keyValue = pair.indexOf("=");
-            if (keyValue > 0) {
-                String key = URLDecoder.decode(pair.substring(0, keyValue), StandardCharsets.UTF_8);
-                String value = (keyValue < pair.length() - 1)
-                        ? URLDecoder.decode(pair.substring(keyValue + 1), StandardCharsets.UTF_8)
-                        : "";
-                params.put(key, value);
-            } else if (keyValue == -1) {
-                String key = URLDecoder.decode(pair, StandardCharsets.UTF_8);
-                params.put(key, "");
+            String[] keyValue = pair.split("=", 2);
+            String rawKey = keyValue[0];
+            String rawValue = (keyValue.length > 1) ? keyValue[1] : "";
+
+            String key;
+            String value;
+
+            try {
+                key = URLDecoder.decode(rawKey, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                System.err.println("[Warn] Parameter Key URLDecode Failed (" + rawKey + "): " + e.getMessage());
+                key = rawKey;
             }
+
+            try {
+                value = URLDecoder.decode(rawValue, StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                System.err.println("[Warn] Parameter Value URLDecode Failed (" + rawValue + "): " + e.getMessage());
+                value = rawValue;
+            }
+
+            params.put(key, value);
         }
     }
 
@@ -110,7 +125,10 @@ public class HttpRequest {
 
     public String getMethod() { return method; }
     public String getPath() { return path; }
-    public String getHeader(String name) { return headers.get(name.toLowerCase()); }
+    public String getHeader(String name) {
+        if (name == null) return null;
+        return headers.get(name.toLowerCase());
+    }
     public String getParam(String name) { return params.get(name); }
     public String getCookie(String name) { return cookies.get(name); }
 

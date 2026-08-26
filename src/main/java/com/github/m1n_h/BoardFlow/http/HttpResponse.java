@@ -52,18 +52,11 @@ public class HttpResponse {
         }
     }
 
-    public void sendRedirect(String redirectUrl) {
-        try {
-            dos.writeBytes("HTTP/1.1 302 Found \r\n");
-            dos.writeBytes("Location: " + redirectUrl + "\r\n");
+    public void sendRedirect(String redirectUrl) throws IOException {
+        addHeader("Location", redirectUrl);
+        addHeader("Connection", "close");
 
-            processHeaders();
-
-            dos.writeBytes("\r\n");
-            dos.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        sendResponse("302 Found", new byte[0]);
     }
 
     public void sendHtml(String htmlContent) throws IOException {
@@ -71,8 +64,9 @@ public class HttpResponse {
 
         addHeader("Content-Type", "text/html; charset=utf-8");
         addHeader("Content-Length", String.valueOf(body.length));
+        addHeader("Connection", "close");
 
-        sendResponse("200", body);
+        sendResponse("200 OK", body);
     }
 
     public void forward404(String path) {
@@ -98,16 +92,25 @@ public class HttpResponse {
     }
 
     private void sendResponse(String status, byte[] body) throws IOException {
-        dos.writeBytes("HTTP/1.1 " + status + "\r\n");
-        processHeaders();
-        dos.writeBytes("\r\n"); // Header와 Body를 구분하는 빈 줄
-        dos.write(body, 0, body.length);
+        dos.write(("HTTP/1.1 " + status + "\r\n").getBytes(StandardCharsets.UTF_8));
+
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            String line = header.getKey() + ": " + header.getValue() + "\r\n";
+            dos.write(line.getBytes(StandardCharsets.UTF_8));
+        }
+
+        dos.write("\r\n".getBytes(StandardCharsets.UTF_8));
+
+        if (body != null && body.length > 0) dos.write(body, 0, body.length);
+
         dos.flush();
+        dos.close();
     }
 
     private void processHeaders() throws IOException {
         for (Map.Entry<String, String> header : headers.entrySet()) {
-            dos.writeBytes(header.getKey() + ": " + header.getValue() + "\r\n");
+            String line = header.getKey() + ": " + header.getValue() + "\r\n";
+            dos.write(line.getBytes(StandardCharsets.UTF_8));
         }
     }
 

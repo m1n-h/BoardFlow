@@ -28,7 +28,10 @@ export class AuthModal {
         });
 
         this.loginForm?.addEventListener("submit", (e: Event) => this.handleSubmit(e, "/login"));
-        this.joinForm?.addEventListener("submit", (e: Event) => this.handleSubmit(e, "/join"));
+        this.joinForm?.addEventListener("submit", (e: Event) => {
+            e.preventDefault();
+            this.handleSubmit(e, "/join");
+        });
     }
 
     public openModal(type: "login" | "join"): void {
@@ -51,7 +54,10 @@ export class AuthModal {
 
     private async handleSubmit(e: Event, url: string): Promise<void> {
         e.preventDefault();
-        const form = e.target as HTMLFormElement;
+
+        const form = (e.currentTarget || e.target) as HTMLFormElement;
+        if (!form) return;
+
         const formData = new FormData(form);
         const bodyParams = new URLSearchParams();
 
@@ -65,13 +71,16 @@ export class AuthModal {
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
                 },
-                body: bodyParams,
+                body: bodyParams.toString(),
             });
 
             if (response.ok) {
+                alert("성공적으로 처리 되었습니다.");
                 this.closeModal();
                 window.location.reload();
             } else {
+                const errorText = await response.text();
+                console.error("Server Error Response:", response.status, errorText);
                 alert("처리 중 오류가 발생했습니다.");
             }
         } catch (error) {
