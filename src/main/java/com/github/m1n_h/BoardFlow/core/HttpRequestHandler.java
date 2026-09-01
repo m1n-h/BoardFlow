@@ -45,7 +45,7 @@ public class HttpRequestHandler implements Runnable {
         OutputStream out = socket.getOutputStream();
 
         HttpRequest request = new HttpRequest(reader);
-        HttpResponse response = new HttpResponse(out);
+        HttpResponse response = new HttpResponse(out, request);
 
         Router.route(request, response);
     }

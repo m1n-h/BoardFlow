@@ -1,5 +1,7 @@
 package com.github.m1n_h.BoardFlow.http;
 
+import com.github.m1n_h.BoardFlow.model.User;
+
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -52,6 +54,21 @@ public class SessionManager {
 
     public static void removeSession(String sessionId) {
         if (sessionId != null) sessions.remove(sessionId);
+    }
+
+    public static boolean isValidSession(String sessionId) {
+        return sessionId != null && sessions.containsKey(sessionId);
+    }
+
+    public static User getUserBySessionId(String sessionId) {
+        if (!isValidSession(sessionId)) return null;
+
+        Session session = sessions.get(sessionId);
+        Object attribute = session.getAttribute();
+
+        if (attribute instanceof User) return (User) attribute;
+
+        return null;
     }
 
     private static void cleanExpiredSessions() {

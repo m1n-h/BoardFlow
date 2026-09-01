@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class TemplateEngine {
 
-    public static String render(String html, Map<String, String> model) throws IOException {
-        if (html == null || model == null) return html;
+    public static String render(String html, Map<String, String> model, HttpRequest request) throws IOException {
+        if (html == null) return html;
 
         String result = html;
 
@@ -29,10 +29,19 @@ public class TemplateEngine {
             result = result.replace("{{modal}}", modalContent);
         }
 
+        if (result.contains("{{loginNav}}")) {
+            String sessionId = (request != null) ? request.getCookie("sid") : null;
+            User user = (sessionId != null) ? (User) SessionManager.getSession(sessionId) : null;
+            result = result.replace("{{loginNav}}", buildLoginNavHtml(user));
+        }
+
         if (model != null) {
             for (Map.Entry<String, String> entry : model.entrySet()) {
-                String placeholder = "{{" + entry.getKey() + "}}";
-                result = result.replace(placeholder, entry.getValue() != null ? entry.getValue() : "");
+                String key = entry.getKey();
+                String value = entry.getValue() != null ? entry.getValue() : "";
+                String placeholder = "{{" + key + "}}";
+
+                result = result.replace(placeholder, value);
             }
         }
 
@@ -48,6 +57,8 @@ public class TemplateEngine {
         int startIndex = html.indexOf(startTag);
         int endIndex = html.indexOf(endTag);
 
+        if (startIndex == -1 || endIndex == -1) return html;
+
         String templateBlock = html.substring(startIndex + startTag.length(), endIndex);
 
         StringBuilder sb = new StringBuilder();
@@ -62,5 +73,19 @@ public class TemplateEngine {
         }
 
         return html.substring(0, startIndex) + sb.toString() + html.substring(endIndex + endTag.length());
+    }
+
+    private static String buildLoginNavHtml(User user) {
+        String loginNavHtml = "";
+        if (user != null) {
+            loginNavHtml = "<span><strong>" + user.getUserName() + "</strong> 님 환영합니다!</span>"
+                    + "<button type='button' id='myPageBtn' class='btn btn-sm btn-outline-secondary ms-2'>마이페이지</button>"
+                    + "<button type='button' id='logoutBtn' class='btn btn-sm btn-outline-danger ms-2'>로그아웃</button>";
+        } else {
+            loginNavHtml = "<button type='button' id='loginBtn' class='btn btn-sm btn-outline-primary'>로그인</button>"
+                    + "<button type='button' id='joinBtn' class='btn btn-sm btn-outline-secondary ms-2'>회원가입</button>";
+        }
+
+        return loginNavHtml;
     }
 }

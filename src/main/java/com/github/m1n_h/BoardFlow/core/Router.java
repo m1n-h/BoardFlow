@@ -27,6 +27,11 @@ public class Router {
         mappings.put("/user/login", userController);
         mappings.put("/user/list", userController);
 
+        mappings.put("/user/mypage", userController);
+        mappings.put("/user/mypage.html", userController);
+        mappings.put("/mypage", userController);
+        mappings.put("/mypage.html", userController);
+
         //mappings.put("/board", new BoardController());
         //mappings.put("/schedule", new ScheduleController());
     }

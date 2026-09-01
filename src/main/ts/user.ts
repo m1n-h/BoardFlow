@@ -20,6 +20,10 @@ export async function handleLogout(): Promise<void> {
 
     if (response.ok) {
         alert("로그아웃 되었습니다.");
-        window.location.href = "/index.html";
+        window.location.href = "/";
     }
+}
+
+export function goMyPage(): void {
+    window.location.href = "/user/mypage.html";
 }

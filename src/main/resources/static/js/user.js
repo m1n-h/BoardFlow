@@ -12,6 +12,9 @@ export async function handleLogout() {
     });
     if (response.ok) {
         alert("로그아웃 되었습니다.");
-        window.location.href = "/index.html";
+        window.location.href = "/";
     }
+}
+export function goMyPage() {
+    window.location.href = "/user/mypage.html";
 }

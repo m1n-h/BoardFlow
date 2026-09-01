@@ -1,5 +1,7 @@
 package com.github.m1n_h.BoardFlow.http;
 
+import com.github.m1n_h.BoardFlow.util.FileUtil;
+
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +15,20 @@ import java.util.Map;
 public class HttpResponse {
 
     private final DataOutputStream dos;
+    private final HttpRequest request;
     private final Map<String,String> headers = new HashMap<>();
 
-    public HttpResponse(OutputStream outputStream) {
+    public HttpResponse(OutputStream outputStream, HttpRequest request) {
         this.dos = new DataOutputStream(outputStream);
+        this.request = request;
+    }
+
+    public HttpResponse(OutputStream outputStream) { this(outputStream, null); }
+
+    public void render(String filePath, Map<String,String> model) throws IOException {
+        String rawHtml = FileUtil.readFileAsString(filePath);
+        String finalHtml = TemplateEngine.render(rawHtml, model, this.request);
+        sendHtml(finalHtml);
     }
 
     public void addHeader(String key, String value) {

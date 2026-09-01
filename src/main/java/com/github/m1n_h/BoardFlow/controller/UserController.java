@@ -10,6 +10,8 @@ import com.github.m1n_h.BoardFlow.util.FileUtil;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserController implements Controller {
 
@@ -18,14 +20,21 @@ public class UserController implements Controller {
         String path = request.getPath();
         String method = request.getMethod();
 
+        System.out.println("[DEBUG Path]: " + path);
+
         if ("GET".equalsIgnoreCase(method) && ("/login".equals(path) || "/user/login".equals(path))) {
             response.forward("/user/login.html");
         } else if ("POST".equalsIgnoreCase(method) && ("/login".equals(path) || "/user/login".equals(path))) {
             handleLogin(request, response);
-        } else if (("/logout".equals(path) || "/user/logout".equals(path))) {
+        } else if ("/logout".equals(path) || "/user/logout".equals(path)) {
             handleLogout(request, response);
         } else if ("POST".equalsIgnoreCase(method) && ("/join".equals(path) || "/user/join".equals(path))) {
             handleJoin(request, response);
+        } else if ("GET".equalsIgnoreCase(method) &&
+                ("/mypage".equals(path) || "/user/mypage".equals(path)
+                || "/mypage.html".equals(path) || "/user/mypage.html".equals(path))
+        ) {
+            handleMyPage(request, response);
         }
     }
 
@@ -90,6 +99,27 @@ public class UserController implements Controller {
 
 //        response.sendRedirect("/");
         response.sendHtml("SUCCESS");
+    }
+
+    private void handleMyPage(HttpRequest request, HttpResponse response) throws IOException {
+        String sessionId = request.getCookie("sid");
+        if (sessionId == null || !SessionManager.isValidSession(sessionId)) {
+            response.sendRedirect("/");
+            return;
+        }
+
+        User currentUser = (User) SessionManager.getSession(sessionId);
+        if (currentUser == null) {
+            response.sendRedirect("/");
+            return;
+        }
+
+        Map<String, String> model = new HashMap<>();
+        model.put("userName", currentUser.getUserName());
+        model.put("userId", currentUser.getUserId());
+        model.put("userEmail", currentUser.getUserEmail());
+
+        response.render("static/user/mypage.html", model);
     }
 
 }
