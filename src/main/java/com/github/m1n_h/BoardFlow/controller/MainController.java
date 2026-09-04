@@ -1,5 +1,6 @@
 package com.github.m1n_h.BoardFlow.controller;
 
+import com.github.m1n_h.BoardFlow.db.DataBase;
 import com.github.m1n_h.BoardFlow.http.HttpRequest;
 import com.github.m1n_h.BoardFlow.http.HttpResponse;
 import com.github.m1n_h.BoardFlow.http.SessionManager;
@@ -18,7 +19,22 @@ public class MainController implements Controller {
         String path = request.getPath();
 
         if ("/".equals(path) || "/index.html".equals(path)) {
-            response.render("static/index.html", null);
+            Map<String, Object> model = new HashMap<>();
+
+            String sessionId = request.getCookie("sid");
+            if (sessionId != null) {
+                User user = (User) SessionManager.getSession(sessionId);
+                String adminNav = (user != null && "admin".equals(user.getUserId())) ?
+                        "<button type=\"button\" id=\"userListBtn\" class=\"btn btn-sm btn-outline-warning ms-2\">회원목록</button>"
+                        : "";
+
+                if (user != null) {
+                    model.put("userName", user.getUserName());
+                    model.put("adminNav", adminNav);
+                }
+            }
+
+            response.render("static/index.html", model);
         }
     }
 }

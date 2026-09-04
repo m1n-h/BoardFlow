@@ -18,6 +18,9 @@ public class HttpResponse {
     private final HttpRequest request;
     private final Map<String,String> headers = new HashMap<>();
 
+    private int statusCode = 200;
+    private String statusText = "OK";
+
     public HttpResponse(OutputStream outputStream, HttpRequest request) {
         this.dos = new DataOutputStream(outputStream);
         this.request = request;
@@ -25,7 +28,7 @@ public class HttpResponse {
 
     public HttpResponse(OutputStream outputStream) { this(outputStream, null); }
 
-    public void render(String filePath, Map<String,String> model) throws IOException {
+    public void render(String filePath, Map<String,Object> model) throws IOException {
         String rawHtml = FileUtil.readFileAsString(filePath);
         String finalHtml = TemplateEngine.render(rawHtml, model, this.request);
         sendHtml(finalHtml);
@@ -33,6 +36,17 @@ public class HttpResponse {
 
     public void addHeader(String key, String value) {
         headers.put(key, value);
+    }
+
+    public void setStatus(int statusCode) {
+        this.statusCode = statusCode;
+        switch (statusCode) {
+            case 200: this.statusText = "OK"; break;
+            case 302: this.statusText = "Found"; break;
+            case 401: this.statusText = "Unauthorized"; break;
+            case 403: this.statusText = "Forbidden"; break;
+            case 404: this.statusText = "Not Found"; break;
+        }
     }
 
     public void forward(String path) {
@@ -79,6 +93,20 @@ public class HttpResponse {
         addHeader("Connection", "close");
 
         sendResponse("200 OK", body);
+    }
+
+    public void sendUnauthorized(String message) throws IOException {
+        byte[] body = message.getBytes(StandardCharsets.UTF_8);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("HTTP/1.1 401 Unauthorized\r\n");
+        sb.append("Content-Type: text/html\r\n");
+        sb.append("Content-Length: ").append(body.length).append("\r\n");
+        sb.append("Connection: close\r\n");
+
+        dos.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+        dos.write(body);
+        dos.flush();
     }
 
     public void forward404(String path) {

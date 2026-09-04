@@ -22,10 +22,20 @@ public class Router {
         mappings.put("/index.html", mainController);
 
         mappings.put("/login", userController);
+        mappings.put("/login.html", userController);
+        mappings.put("/user/login", userController);
+        mappings.put("/user/login.html", userController);
+
         mappings.put("/join", userController);
         mappings.put("/logout", userController);
-        mappings.put("/user/login", userController);
+
+        mappings.put("/loginNav", userController);
+        mappings.put("/common/loginNav.html", userController);
+        mappings.put("/logoutNav", userController);
+        mappings.put("/common/logoutNav.html", userController);
+
         mappings.put("/user/list", userController);
+        mappings.put("/user/list.html", userController);
 
         mappings.put("/user/mypage", userController);
         mappings.put("/user/mypage.html", userController);

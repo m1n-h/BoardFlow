@@ -20,11 +20,10 @@ public class UserController implements Controller {
         String path = request.getPath();
         String method = request.getMethod();
 
-        System.out.println("[DEBUG Path]: " + path);
-
-        if ("GET".equalsIgnoreCase(method) && ("/login".equals(path) || "/user/login".equals(path))) {
-            response.forward("/user/login.html");
-        } else if ("POST".equalsIgnoreCase(method) && ("/login".equals(path) || "/user/login".equals(path))) {
+        if (("POST".equalsIgnoreCase(method) || "GET".equalsIgnoreCase(method)) &&
+                ("/login".equals(path) || "/user/login".equals(path)
+                || "login.html".equals(path) || "/user/login.html".equals(path))
+        ) {
             handleLogin(request, response);
         } else if ("/logout".equals(path) || "/user/logout".equals(path)) {
             handleLogout(request, response);
@@ -35,6 +34,11 @@ public class UserController implements Controller {
                 || "/mypage.html".equals(path) || "/user/mypage.html".equals(path))
         ) {
             handleMyPage(request, response);
+        } else if ("GET".equalsIgnoreCase(method) &&
+                ("/list".equals(path) || "/user/list".equals(path)
+                || "/list.html".equals(path) || "/user/list.html".equals(path))
+        ) {
+            handleUserList(request, response);
         }
     }
 
@@ -69,16 +73,21 @@ public class UserController implements Controller {
         User loginUser = (User) SessionManager.getSession(sessionId);
 
         if (loginUser == null) {
-            response.sendRedirect("/user/login.html");
+            response.setStatus(401);
+            response.sendHtml("UNAUTHORIZED");
             return;
         }
 
-        String html = FileUtil.readFileAsString("static/user/list.html");
+        if (!"admin".equals(loginUser.getUserId())) {
+            response.setStatus(403);
+            response.sendHtml("FORBIDDEN");
+            return;
+        }
 
-        Collection<User> users = DataBase.findAll();
-        String renderHtml = TemplateEngine.renderUserList(html, users);
+        Map<String, Object> model = new HashMap<>();
+        model.put("users", DataBase.findAll());
 
-        response.sendHtml(renderHtml);
+        response.render("static/user/list.html", model);
     }
 
     private void handleJoin(HttpRequest request, HttpResponse response) throws IOException {
@@ -114,7 +123,7 @@ public class UserController implements Controller {
             return;
         }
 
-        Map<String, String> model = new HashMap<>();
+        Map<String, Object> model = new HashMap<>();
         model.put("userName", currentUser.getUserName());
         model.put("userId", currentUser.getUserId());
         model.put("userEmail", currentUser.getUserEmail());
