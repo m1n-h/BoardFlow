@@ -1,0 +1,26 @@
+{{header}}
+
+<main id="board-detail" class="mt-4 mb-4">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3 border-bottom">
+                <h3 class="mb-2">{{title}}</h3>
+                <div class="text-muted small d-flex justify-content-between">
+                    <span>작성자: <strong>{{writer}}</strong></span>
+                    <span>작성일: {{createdAt}}</span>
+                </div>
+            </div>
+
+            <div class="card-body py-4">
+                {{content}}
+            </div>
+
+            <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-sm btn-secondary">목록으로</button>
+                <div>{{actionButtons}}</div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{footer}}

@@ -1,0 +1,42 @@
+{{header}}
+
+<main id="board-write" class="mb-4 mt-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <h2 class="mb-4">게시글 작성</h2>
+
+                <form action="/board/create" method="post" id="articleCreateForm">
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-bold">제목</label>
+                        <input type="text"
+                               class="form-control"
+                               id="title"
+                               name="title"
+                               placeholder="제목을 입력하세요"
+                               required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label fw-bold">내용</label>
+                        <textarea class="form-control"
+                                  id="content"
+                                  name="content"
+                                  rows="5"
+                                  placeholder="내용을 입력하세요"
+                                  required
+                        ></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/board/list" class="btn btn-sm btn-outline-secondary me-2">이전</a>
+                        <button type="submit" class="btn btn-sm btn-primary">등록</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{footer}}

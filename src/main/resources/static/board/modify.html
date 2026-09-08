@@ -1,0 +1,42 @@
+{{header}}
+
+<main id="board-modify" class="mb-4 mt-4">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <h2 class="mb-4">게시글 수정</h2>
+
+                <form action="/board/update" method="post" id="articleUpdateForm">
+                    <input type="hidden" name="id" value="{{articleId}}" />
+
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-bold">제목</label>
+                        <input type="text"
+                               class="form-control"
+                               id="title"
+                               name="title"
+                               value="{{title}}"
+                               required
+                        />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="content" class="form-label fw-bold">내용</label>
+                        <textarea class="form-control"
+                                  id="content"
+                                  name="content"
+                                  rows="5"
+                        >{{content}}</textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2">
+                        <a href="/board/list" class="btn btn-sm btn-outline-secondary me-2">이전</a>
+                        <button type="submit" class="btn btn-sm btn-primary">수정</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+{{footer}}

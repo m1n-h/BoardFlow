@@ -1,0 +1,42 @@
+{{header}}
+
+<main id="board-list" class="mt-4 mb-4">
+    <div class="container">
+        <h2 class="text-center">게시판 목록</h2>
+        <table class="table table-hover border-gray-1-px">
+            <thead>
+            <tr>
+                <th>No</th>
+                <th>제목</th>
+                <th>작성자</th>
+                <th>작성일</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#article}}
+            <tr>
+                <td class="text-center">{{articleId}}</td>
+                <td class="text-center">
+                    <a href="/article/detail?id={{articleId}}" class="text-decoration-none text-black article-detail-link">
+                        {{title}}
+                    </a>
+                </td>
+                <td class="text-center">{{writer}}</td>
+                <td class="text-center">{{createdAt}}</td>
+            </tr>
+            {{/article}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td class="text-center" colspan="4"></td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <button type="button" class="btn btn-sm btn-outline-warning mt-2 mb-2 pt-2 pb-2">
+            <a href="/board/write" class="d-block">글쓰기</a>
+        </button>
+    </div>
+</main>
+
+{{footer}}

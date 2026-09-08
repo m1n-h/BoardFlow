@@ -1,8 +1,6 @@
 package com.github.m1n_h.BoardFlow.core;
 
-import com.github.m1n_h.BoardFlow.controller.Controller;
-import com.github.m1n_h.BoardFlow.controller.MainController;
-import com.github.m1n_h.BoardFlow.controller.UserController;
+import com.github.m1n_h.BoardFlow.controller.*;
 import com.github.m1n_h.BoardFlow.http.HttpRequest;
 import com.github.m1n_h.BoardFlow.http.HttpResponse;
 
@@ -17,6 +15,8 @@ public class Router {
     static {
         MainController mainController = new MainController();
         UserController userController = new UserController();
+        BoardController boardController = new BoardController();
+        ScheduleController scheduleController = new ScheduleController();
 
         mappings.put("/", mainController);
         mappings.put("/index.html", mainController);
@@ -42,8 +42,17 @@ public class Router {
         mappings.put("/mypage", userController);
         mappings.put("/mypage.html", userController);
 
-        //mappings.put("/board", new BoardController());
-        //mappings.put("/schedule", new ScheduleController());
+        mappings.put("/board", boardController);
+        mappings.put("/board/list", boardController);
+        mappings.put("/board/list.html", boardController);
+        mappings.put("/board/modify", boardController);
+        mappings.put("/board/modify.html", boardController);
+        mappings.put("/board/write", boardController);
+        mappings.put("/board/write.html", boardController);
+        mappings.put("/board/detail", boardController);
+        mappings.put("/board/detail.html", boardController);
+
+        // mappings.put("/schedule", scheduleController);
     }
 
     public static void route(HttpRequest request, HttpResponse response) throws IOException {
