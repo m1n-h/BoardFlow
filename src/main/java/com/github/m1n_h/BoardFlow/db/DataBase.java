@@ -52,10 +52,10 @@ public class DataBase {
     }
 
 
-    public static Schedule addSchedule(String userId, String title, String scheduledAt) {
+    public static Schedule addSchedule(String title, String content, LocalDateTime start, LocalDateTime end, String writer) {
         Long scheduleId = scheduleIdGenerator.getAndIncrement();
 
-        Schedule schedule = new Schedule(scheduleId, userId, title, scheduledAt);
+        Schedule schedule = new Schedule(scheduleId, title, content, start, end, writer);
         schedules.put(scheduleId, schedule);
         return schedule;
     }
@@ -63,5 +63,15 @@ public class DataBase {
     public static Schedule findScheduleById(Long scheduleId) { return schedules.get(scheduleId); }
     public static Collection<Schedule> findAllSchedules() { return schedules.values(); }
     public static void deleteSchedule(Long scheduleId) { schedules.remove(scheduleId); }
+
+    public static void updateSchedule(Long scheduleId, String newTitle, String newContent, LocalDateTime start, LocalDateTime end) {
+        Schedule schedule = schedules.get(scheduleId);
+        if (schedule != null) {
+            schedule.setTitle(newTitle);
+            schedule.setContent(newContent);
+            schedule.setStartDateTime(start);
+            schedule.setEndDateTime(end);
+        }
+    }
 
 }

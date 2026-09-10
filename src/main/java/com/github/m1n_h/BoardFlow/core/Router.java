@@ -52,7 +52,15 @@ public class Router {
         mappings.put("/board/detail", boardController);
         mappings.put("/board/detail.html", boardController);
 
-        // mappings.put("/schedule", scheduleController);
+        mappings.put("/schedule", scheduleController);
+        mappings.put("/schedule/list", scheduleController);
+        mappings.put("/schedule/list.html", scheduleController);
+        mappings.put("/schedule/modify", scheduleController);
+        mappings.put("/schedule/modify.html", scheduleController);
+        mappings.put("/schedule/write", scheduleController);
+        mappings.put("/schedule/write.html", scheduleController);
+        mappings.put("/schedule/detail", scheduleController);
+        mappings.put("/schedule/detail.html", scheduleController);
     }
 
     public static void route(HttpRequest request, HttpResponse response) throws IOException {
