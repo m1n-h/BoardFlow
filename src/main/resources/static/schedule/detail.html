@@ -1,0 +1,30 @@
+
+<main id="schedule-detail" class="mt-4 mb-4">
+    <div class="container">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">{{title}}</h3>
+                <span class="badge bg-secondary">작성자: {{writer}}</span>
+            </div>
+
+            <div class="card-body">
+                <div class="mb-3 text-muted">
+                    <small>
+                        📅 <strong>{{start}} ~ {{end}}</strong>
+                    </small>
+                </div>
+
+                <hr />
+
+                <div class="card-text mb-4">
+                    {{content}}
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="/schedule/list" class="btn btn-sm btn-secondary schedule-list-link">목록으로</a>
+                    {{actionButtons}}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
