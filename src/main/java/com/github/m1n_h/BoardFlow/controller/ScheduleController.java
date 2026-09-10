@@ -7,6 +7,7 @@ import com.github.m1n_h.BoardFlow.http.SessionManager;
 import com.github.m1n_h.BoardFlow.model.Article;
 import com.github.m1n_h.BoardFlow.model.Schedule;
 import com.github.m1n_h.BoardFlow.model.User;
+import com.github.m1n_h.BoardFlow.util.DateUtils;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -14,6 +15,7 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -106,8 +108,8 @@ public class ScheduleController implements Controller {
         model.put("id", schedule.getId());
         model.put("title", schedule.getTitle());
         model.put("content", schedule.getContent());
-        model.put("start", schedule.getStartDateTime());
-        model.put("end", schedule.getEndDateTime());
+        model.put("start", DateUtils.toDisplayString(schedule.getStartDateTime()));
+        model.put("end", DateUtils.toDisplayString(schedule.getEndDateTime()));
         model.put("writer", schedule.getWriter());
 
         if (isWriter || isAdmin) {
@@ -154,8 +156,8 @@ public class ScheduleController implements Controller {
         }
 
         try {
-            LocalDateTime start = LocalDateTime.parse(startParam);
-            LocalDateTime end = LocalDateTime.parse(endParam);
+            LocalDateTime start = DateUtils.parseDateTimeLocal(startParam);
+            LocalDateTime end = DateUtils.parseDateTimeLocal(endParam);
 
             DataBase.addSchedule(title, content, start, end, user.getUserName());
             response.sendRedirect("/schedule/list");
@@ -192,8 +194,8 @@ public class ScheduleController implements Controller {
         model.put("id", schedule.getId());
         model.put("title", schedule.getTitle());
         model.put("content", schedule.getContent());
-        model.put("start", schedule.getStartDateTime());
-        model.put("end", schedule.getEndDateTime());
+        model.put("start", DateUtils.toDateTimeLocal(schedule.getStartDateTime()));
+        model.put("end", DateUtils.toDateTimeLocal(schedule.getEndDateTime()));
 
         response.render("static/schedule/modify.html", model);
     }
@@ -227,8 +229,8 @@ public class ScheduleController implements Controller {
         String endParam = request.getParam("end");
 
         try {
-            LocalDateTime start = LocalDateTime.parse(startParam);
-            LocalDateTime end = LocalDateTime.parse(endParam);
+            LocalDateTime start = DateUtils.parseDateTimeLocal(startParam);
+            LocalDateTime end = DateUtils.parseDateTimeLocal(endParam);
 
             DataBase.updateSchedule(scheduleId, title, content, start, end);
             response.sendRedirect("/schedule/detail?id=" + schedule.getId());
