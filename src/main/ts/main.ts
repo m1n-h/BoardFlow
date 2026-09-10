@@ -1,4 +1,7 @@
-import { handleLogin, handleLogout, goMyPage, loadUserList } from "./user.js";
+import { handleLogin,
+    handleLogout,
+    goMyPage,
+    loadUserList } from "./user.js";
 import { fetchArticles,
     loadArticleList,
     loadArticleDetail,
@@ -7,7 +10,7 @@ import { fetchArticles,
     loadArticleUpdateForm,
     updateArticle,
     deleteArticle } from "./board.js";
-import { loadSchedule } from "./schedule.js";
+//import {  } from "./schedule.js";
 import { AuthModal } from "./authModal.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -35,10 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
         fetchArticles().then(articles => {
             console.log(articles);
         });
-    }
-
-    if (document.getElementById("calendar")) {
-        loadSchedule("2026-08");
     }
 
     new AuthModal();
