@@ -31,7 +31,7 @@ export async function createArticle(form: HTMLFormElement): Promise<void> {
     const bodyParams = new URLSearchParams(formData as any);
 
     try {
-        const response: Response = await fetch("/board/create", {
+        const response: Response = await fetch("/board/write", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -101,7 +101,7 @@ export async function loadArticleForm(): Promise<void> {
 
 export async function loadArticleUpdateForm(articleId: number): Promise<void> {
     try {
-        const response = await fetch(`/board/update?id=${articleId}`);
+        const response = await fetch(`/board/modify?id=${articleId}`);
 
         if (response.status === 401) {
             alert("로그인이 필요합니다.");
@@ -128,7 +128,7 @@ export async function updateArticle(form: HTMLFormElement): Promise<void> {
     const bodyParams = new URLSearchParams(formData as any);
 
     try {
-        const response = await fetch("/board/update", {
+        const response = await fetch("/board/modify", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -194,7 +194,7 @@ export async function deleteArticle(articleId: number): Promise<void> {
 }
 
 function renderMainContent(html: string): void {
-    const contentContainer = document.querySelector("#main .container");
+    const contentContainer = document.querySelector("#main-content .container");
     if (contentContainer) {
         contentContainer.innerHTML = html;
     } else {

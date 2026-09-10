@@ -20,7 +20,7 @@ export async function createArticle(form) {
     const formData = new FormData(form);
     const bodyParams = new URLSearchParams(formData);
     try {
-        const response = await fetch("/board/create", {
+        const response = await fetch("/board/write", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -84,7 +84,7 @@ export async function loadArticleForm() {
 }
 export async function loadArticleUpdateForm(articleId) {
     try {
-        const response = await fetch(`/board/update?id=${articleId}`);
+        const response = await fetch(`/board/modify?id=${articleId}`);
         if (response.status === 401) {
             alert("로그인이 필요합니다.");
             if (typeof openLoginModal === "function")
@@ -108,7 +108,7 @@ export async function updateArticle(form) {
     const formData = new FormData(form);
     const bodyParams = new URLSearchParams(formData);
     try {
-        const response = await fetch("/board/update", {
+        const response = await fetch("/board/modify", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -171,7 +171,7 @@ export async function deleteArticle(articleId) {
     }
 }
 function renderMainContent(html) {
-    const contentContainer = document.querySelector("#main .container");
+    const contentContainer = document.querySelector("#main-content .container");
     if (contentContainer) {
         contentContainer.innerHTML = html;
     }

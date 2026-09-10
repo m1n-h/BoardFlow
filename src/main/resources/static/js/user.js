@@ -34,7 +34,7 @@ export async function loadUserList() {
         if (!response.ok)
             throw new Error(`HTTP error! status: ${response.status}`);
         const html = await response.text();
-        const contentContainer = document.querySelector("#main .container");
+        const contentContainer = document.querySelector("#main-content .container");
         if (contentContainer) {
             contentContainer.innerHTML = html;
         }

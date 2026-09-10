@@ -19,40 +19,46 @@ public class BoardController implements Controller {
         String path = request.getPath();
         String method = request.getMethod();
 
-        if ("GET".equalsIgnoreCase(method) &&
-                ("/list".equals(path) || "/board/list".equals(path)
-                || "/list.html".equals(path) || "/board/list.html".equals(path))
-        ) {
-            showList(request, response);
-        } else if ("GET".equalsIgnoreCase(method) &&
-                ("/detail".equals(path) || "/board/detail".equals(path)
-                || "/detail.html".equals(path) || "/board/detail.html".equals(path))
-        ) {
-            showDetail(request, response);
-        } else if ("GET".equalsIgnoreCase(method) &&
-                ("/write".equals(path) || "/board/write".equals(path)
-                || "/write.html".equals(path) || "/board/write.html".equals(path))
-        ) {
-            showForm(request, response);
-        } else if ("POST".equalsIgnoreCase(method) &&
-                ("/write".equals(path) || "/board/write".equals(path)
-                || "/write.html".equals(path) || "/board/write.html".equals(path))
-        ) {
-            createArticle(request, response);
-        } else if ("GET".equalsIgnoreCase(method) &&
-                ("/modify".equals(path) || "/board/modify".equals(path)
-                || "/modify.html".equals(path) || "/board/modify.html".equals(path))
-        ) {
-            showUpdateForm(request, response);
-        } else if ("POST".equalsIgnoreCase(method) &&
-                ("/modify".equals(path) || "/board/modify".equals(path)
-                || "/modify.html".equals(path) || "/board/modify.html".equals(path))
-        ) {
-            updateArticle(request, response);
-        } else if ("POST".equalsIgnoreCase(method) &&
-                ("/delete".equals(path) || "/board/delete".equals(path))
-        ) {
-            deleteArticle(request, response);
+        try {
+            if ("GET".equalsIgnoreCase(method) &&
+                    ("/list".equals(path) || "/board/list".equals(path)
+                            || "/list.html".equals(path) || "/board/list.html".equals(path))
+            ) {
+                showList(request, response);
+            } else if ("GET".equalsIgnoreCase(method) &&
+                    ("/detail".equals(path) || "/board/detail".equals(path)
+                            || "/detail.html".equals(path) || "/board/detail.html".equals(path))
+            ) {
+                showDetail(request, response);
+            } else if ("GET".equalsIgnoreCase(method) &&
+                    ("/write".equals(path) || "/board/write".equals(path)
+                            || "/write.html".equals(path) || "/board/write.html".equals(path))
+            ) {
+                showForm(request, response);
+            } else if ("POST".equalsIgnoreCase(method) &&
+                    ("/write".equals(path) || "/board/write".equals(path)
+                            || "/write.html".equals(path) || "/board/write.html".equals(path))
+            ) {
+                createArticle(request, response);
+            } else if ("GET".equalsIgnoreCase(method) &&
+                    ("/modify".equals(path) || "/board/modify".equals(path)
+                            || "/modify.html".equals(path) || "/board/modify.html".equals(path))
+            ) {
+                showUpdateForm(request, response);
+            } else if ("POST".equalsIgnoreCase(method) &&
+                    ("/modify".equals(path) || "/board/modify".equals(path)
+                            || "/modify.html".equals(path) || "/board/modify.html".equals(path))
+            ) {
+                updateArticle(request, response);
+            } else if ("POST".equalsIgnoreCase(method) &&
+                    ("/delete".equals(path) || "/board/delete".equals(path))
+            ) {
+                deleteArticle(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(500);
+            response.sendHtml("INTERNAL SERVER ERROR");
         }
     }
 
@@ -60,20 +66,28 @@ public class BoardController implements Controller {
         Collection<Article> articles = DataBase.findAllArticles();
 
         Map<String, Object> model = new HashMap<>();
-        model.put("articles", articles);
+        model.put("article", articles);
 
         response.render("static/board/list.html", model);
     }
 
     private void showDetail(HttpRequest request, HttpResponse response) throws IOException {
         String idParam = request.getParam("id");
-        if (idParam == null) {
+        if (idParam == null || idParam.isBlank()) {
             response.setStatus(400);
-            response.sendHtml("INVALID REQUEST");
+            response.sendHtml("BAD REQUEST: Missing Article ID");
             return;
         }
 
-        Long articleId = Long.parseLong(idParam);
+        Long articleId;
+        try {
+            articleId = Long.parseLong(idParam);
+        } catch (NumberFormatException e) {
+            response.setStatus(400);
+            response.sendHtml("BAD REQUEST: Invalid Article ID format");
+            return;
+        }
+
         Article article = DataBase.findArticleById(articleId);
 
         if (article == null) {
@@ -85,12 +99,12 @@ public class BoardController implements Controller {
         String sessionId = request.getCookie("sid");
         User user = (sessionId != null) ? (User) SessionManager.getSession(sessionId) : null;
 
-        boolean isWriter = user != null && article.getWriter().equals(user.getUserId());
-        boolean isAdmin = user != null && "admin".equals(user.getUserId());
+        boolean isWriter = user != null && article.getWriter().equals(user.getUserName());
+        boolean isAdmin = user != null && "관리자".equals(user.getUserName());
 
         Map<String, Object> model = new HashMap<>();
         model.put("article", article);
-        model.put("articleId", article.getId());
+        model.put("id", article.getId());
         model.put("title", article.getTitle());
         model.put("content", article.getContent());
         model.put("writer", article.getWriter());
@@ -98,9 +112,9 @@ public class BoardController implements Controller {
 
         if (isWriter || isAdmin) {
             String actionButtons = String.format(
-                    "<a href=\"/article/update?id=%d\" class=\"btn btn-sm btn-outline-secondary article-update-btn\">수정</a> " +
-                    "<button type=\"button\" onclick=\"deleteArticle(%d)\" class=\"btn btn-sm btn-outline-danger ms-1 article-delete-btn\">삭제</button>",
-                    article.getId(), article.getId()
+                    "<a href=\"/board/modify?id=%d\" class=\"btn btn-sm btn-outline-secondary article-update-btn\" data-id=\"%d\">수정</a> " +
+                    "<button type=\"button\" onclick=\"deleteArticle(%d)\" class=\"btn btn-sm btn-outline-danger ms-1 article-delete-btn\" data-id=\"%d\">삭제</button>",
+                    article.getId(), article.getId(), article.getId(), article.getId()
             );
             model.put("actionButtons", actionButtons);
         } else {
@@ -137,7 +151,7 @@ public class BoardController implements Controller {
             return;
         }
 
-        DataBase.addArticle(title, content, user.getUserId());
+        DataBase.addArticle(title, content, user.getUserName());
         response.sendRedirect("/board/list");
     }
 
@@ -158,18 +172,18 @@ public class BoardController implements Controller {
             return;
         }
 
-        if (!article.getWriter().equals(user.getUserId()) && !"admin".equals(user.getUserId())) {
+        if (!article.getWriter().equals(user.getUserName()) && !"관리자".equals(user.getUserName())) {
             response.setStatus(403);
             response.sendHtml("FORBIDDEN");
             return;
         }
 
         Map<String, Object> model = new HashMap<>();
-        model.put("articleId", article.getId());
+        model.put("id", article.getId());
         model.put("title", article.getTitle());
         model.put("content", article.getContent());
 
-        response.render("static/board/update.html", model);
+        response.render("static/board/modify.html", model);
     }
 
     private void updateArticle(HttpRequest request, HttpResponse response) throws IOException {
@@ -189,7 +203,7 @@ public class BoardController implements Controller {
             return;
         }
 
-        if (!article.getWriter().equals(user.getUserId()) && !"admin".equals(user.getUserId())) {
+        if (!article.getWriter().equals(user.getUserName()) && !"관리자".equals(user.getUserName())) {
             response.setStatus(403);
             response.sendHtml("FORBIDDEN");
             return;
@@ -220,8 +234,8 @@ public class BoardController implements Controller {
             return;
         }
 
-        boolean isWriter = article.getWriter().equals(user.getUserId());
-        boolean isAdmin = "admin".equals(user.getUserId());
+        boolean isWriter = article.getWriter().equals(user.getUserName());
+        boolean isAdmin = "관리자".equals(user.getUserName());
 
         if (!isWriter && !isAdmin) {
             response.setStatus(403);
