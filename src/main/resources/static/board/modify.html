@@ -1,10 +1,17 @@
 {{header}}
 
-<main id="board-modify" class="mb-4 mt-4">
+<main id="board-modify">
+    <div class="bg-secondary py-4 mb-4">
+        <div class="container">
+            <h2 class="text-white text-center fw-bold">Notice Board</h2>
+        </div>
+    </div>
+
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <h2 class="mb-4">게시글 수정</h2>
+        <h2 class="fs-4 mb-4 fw-bold">게시글 수정</h2>
+
+        <div class="card">
+            <div class="card-body">
 
                 <form action="/board/modify" method="post" id="articleUpdateForm">
                     <input type="hidden" name="id" value="{{id}}" />
@@ -30,10 +37,11 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="/board/list" class="btn btn-sm btn-outline-secondary me-2">이전</a>
-                        <button type="submit" class="btn btn-sm btn-primary">수정</button>
+                        <a href="/board/detail?id={{id}}" class="btn btn-sm btn-secondary w-50 py-2" data-id="{{id}}">이전</a>
+                        <button type="submit" class="btn btn-sm btn-success 2-50 py-2">수정</button>
                     </div>
                 </form>
+
             </div>
         </div>
     </div>

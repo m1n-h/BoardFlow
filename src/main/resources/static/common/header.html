@@ -8,15 +8,22 @@
 
     <link rel="stylesheet" href="/css/default.css">
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
-<header class="header border-bottom w-100">
+<header class="header border-bottom w-100 py-4">
     <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light pt-3 pb-3">
-            <a href="/board/list" class="navbar-brand fw-bold">게시판</a>
-            {{loginNav}}
+        <nav class="navbar navbar-expand-lg navbar-light bg-white justify-content-between">
+            <div id="menu-nav">
+                <a href="/board/list" class="navbar-brand fw-bold">게시판</a>
+                <a href="/schedule/list" class="navbar-brand fw-bold">일정</a>
+            </div>
+
+            <div id="login-nav">
+                {{loginNav}}
+            </div>
         </nav>
     </div>
 </header>
 
-<div id="main-content">
+<section id="main-content">

@@ -114,8 +114,8 @@ public class ScheduleController implements Controller {
 
         if (isWriter || isAdmin) {
             String actionButtons = String.format(
-                    "<a href=\"/schedule/modify?id=%d\" class=\"btn btn-sm btn-outline-secondary schedule-update-btn\" data-id=\"%d\">수정</a> " +
-                    "<button type=\"button\" onclick=\"deleteSchedule(%d)\" class=\"btn btn-sm btn-outline-danger ms-1 schedule-delete-btn\" data-id=\"%d\">삭제</button>",
+                    "<a href=\"/schedule/modify?id=%d\" class=\"btn btn-sm btn-success py-2 schedule-update-btn\" data-id=\"%d\">수정</a> " +
+                    "<button type=\"button\" onclick=\"deleteSchedule(%d)\" class=\"btn btn-sm btn-outline-danger py-2 schedule-delete-btn\" data-id=\"%d\">삭제</button>",
                     schedule.getId(), schedule.getId(), schedule.getId(), schedule.getId()
             );
             model.put("actionButtons", actionButtons);

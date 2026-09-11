@@ -25,7 +25,7 @@ public class MainController implements Controller {
             if (sessionId != null) {
                 User user = (User) SessionManager.getSession(sessionId);
                 String adminNav = (user != null && "admin".equals(user.getUserId())) ?
-                        "<button type=\"button\" id=\"userListBtn\" class=\"btn btn-sm btn-outline-warning ms-2\">회원목록</button>"
+                        "<button type=\"button\" id=\"userListBtn\" class=\"btn btn-sm btn-outline-secondary\">회원목록</button>"
                         : "";
 
                 if (user != null) {

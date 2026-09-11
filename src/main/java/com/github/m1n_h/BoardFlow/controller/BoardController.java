@@ -112,8 +112,8 @@ public class BoardController implements Controller {
 
         if (isWriter || isAdmin) {
             String actionButtons = String.format(
-                    "<a href=\"/board/modify?id=%d\" class=\"btn btn-sm btn-outline-secondary article-update-btn\" data-id=\"%d\">수정</a> " +
-                    "<button type=\"button\" onclick=\"deleteArticle(%d)\" class=\"btn btn-sm btn-outline-danger ms-1 article-delete-btn\" data-id=\"%d\">삭제</button>",
+                    "<a href=\"/board/modify?id=%d\" class=\"btn btn-sm btn-success py-2 article-update-btn\" data-id=\"%d\">수정</a> " +
+                    "<button type=\"button\" onclick=\"deleteArticle(%d)\" class=\"btn btn-sm btn-outline-danger py-2 article-delete-btn\" data-id=\"%d\">삭제</button>",
                     article.getId(), article.getId(), article.getId(), article.getId()
             );
             model.put("actionButtons", actionButtons);

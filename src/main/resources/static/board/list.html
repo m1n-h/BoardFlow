@@ -1,8 +1,15 @@
 {{header}}
 
-<main id="board-list" class="mt-4 mb-4">
+<main id="board-list">
+    <div class="bg-secondary py-4 mb-4">
+        <div class="container">
+            <h2 class="text-white text-center fw-bold">Notice Board</h2>
+        </div>
+    </div>
+
     <div class="container">
-        <h2 class="text-center">게시판 목록</h2>
+        <h2 class="fs-4 mb-4 fw-bold">게시판 목록</h2>
+
         <table class="table table-hover border-gray-1-px">
             <thead>
             <tr>
@@ -33,9 +40,10 @@
             </tfoot>
         </table>
 
-        <button type="button" class="btn btn-sm btn-outline-warning mt-2 mb-2 pt-2 pb-2">
-            <a href="/board/write" class="d-block">글쓰기</a>
-        </button>
+        <div class="mt-2 d-flex justify-content-end">
+            <a href="/board/write" class="btn btn-sm btn-warning py-2">글쓰기</a>
+        </div>
+
     </div>
 </main>
 
