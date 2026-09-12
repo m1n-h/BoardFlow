@@ -49,7 +49,7 @@ export async function loadUserList(): Promise<void> {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const html: string = await response.text();
-        const contentContainer = document.querySelector<HTMLElement>("#main-content .container");
+        const contentContainer = document.getElementById("main-content");
 
         if (contentContainer) {
             contentContainer.innerHTML = html;

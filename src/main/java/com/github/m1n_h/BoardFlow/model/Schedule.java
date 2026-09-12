@@ -1,5 +1,7 @@
 package com.github.m1n_h.BoardFlow.model;
 
+import com.github.m1n_h.BoardFlow.util.DateUtils;
+
 import java.time.LocalDateTime;
 
 public class Schedule {
@@ -35,6 +37,9 @@ public class Schedule {
 
     public LocalDateTime getEndDateTime() { return endDateTime; }
     public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
+
+    public String getStart() { return DateUtils.toDisplayString(this.startDateTime); }
+    public String getEnd() { return DateUtils.toDisplayString(this.endDateTime); }
 
     public String getWriter() { return writer; }
     public void setWriter(String writer) { this.writer = writer; }

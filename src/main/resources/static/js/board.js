@@ -144,12 +144,11 @@ export async function deleteArticle(articleId) {
     if (!confirm("정말 이 게시글을 삭제하시겠습니까?"))
         return;
     try {
-        const response = await fetch("/board/delete", {
+        const response = await fetch(`/board/delete?id=${articleId}`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `id=${articleId}`
+                "X-Requested-With": "XMLHttpRequest"
+            }
         });
         if (response.status === 401) {
             alert("로그인이 필요합니다.");
@@ -171,7 +170,7 @@ export async function deleteArticle(articleId) {
     }
 }
 function renderMainContent(html) {
-    const contentContainer = document.querySelector("#main-content .container");
+    const contentContainer = document.getElementById("main-content");
     if (contentContainer) {
         contentContainer.innerHTML = html;
     }

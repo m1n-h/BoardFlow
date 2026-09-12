@@ -65,8 +65,12 @@ public class BoardController implements Controller {
     private void showList(HttpRequest request, HttpResponse response) throws IOException {
         Collection<Article> articles = DataBase.findAllArticles();
 
+        String sessionId = request.getCookie("sid");
+        User user = (User) SessionManager.getSession(sessionId);
+
         Map<String, Object> model = new HashMap<>();
         model.put("article", articles);
+        model.put("userName", user.getUserName());
 
         response.render("static/board/list.html", model);
     }
@@ -109,10 +113,11 @@ public class BoardController implements Controller {
         model.put("content", article.getContent());
         model.put("writer", article.getWriter());
         model.put("createdAt", article.getCreatedAt());
+        model.put("userName", user.getUserName());
 
         if (isWriter || isAdmin) {
             String actionButtons = String.format(
-                    "<a href=\"/board/modify?id=%d\" class=\"btn btn-sm btn-success py-2 article-update-btn\" data-id=\"%d\">수정</a> " +
+                    "<a href=\"/board/modify?id=%d\" class=\"btn btn-sm btn-success py-2 mx-2 article-update-btn\" data-id=\"%d\">수정</a> " +
                     "<button type=\"button\" onclick=\"deleteArticle(%d)\" class=\"btn btn-sm btn-outline-danger py-2 article-delete-btn\" data-id=\"%d\">삭제</button>",
                     article.getId(), article.getId(), article.getId(), article.getId()
             );

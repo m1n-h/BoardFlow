@@ -14,10 +14,7 @@ import java.text.ParseException;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class ScheduleController implements Controller {
 
@@ -67,8 +64,29 @@ public class ScheduleController implements Controller {
     private void showList(HttpRequest request, HttpResponse response) throws IOException {
         Collection<Schedule> schedules = DataBase.findAllSchedules();
 
+        String sessionId = request.getCookie("sid");
+        User user = (User) SessionManager.getSession(sessionId);
+
+        List<Map<String, Object>> scheduleList = new ArrayList<>();
+        for (Schedule s : schedules) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", s.getId());
+            map.put("title", s.getTitle());
+            map.put("content", s.getContent());
+
+            String startStr = (s.getStartDateTime() != null) ? DateUtils.toDisplayString(s.getStartDateTime()) : "";
+            String endStr = (s.getEndDateTime() != null) ? DateUtils.toDisplayString(s.getEndDateTime()) : "";
+
+            map.put("start", startStr);
+            map.put("end", endStr);
+            map.put("writer", s.getWriter());
+
+            scheduleList.add(map);
+        }
+
         Map<String, Object> model = new HashMap<>();
         model.put("schedule", schedules);
+        model.put("userName", user.getUserName());
 
         response.render("static/schedule/list.html", model);
     }
@@ -111,10 +129,11 @@ public class ScheduleController implements Controller {
         model.put("start", DateUtils.toDisplayString(schedule.getStartDateTime()));
         model.put("end", DateUtils.toDisplayString(schedule.getEndDateTime()));
         model.put("writer", schedule.getWriter());
+        model.put("userName", user.getUserName());
 
         if (isWriter || isAdmin) {
             String actionButtons = String.format(
-                    "<a href=\"/schedule/modify?id=%d\" class=\"btn btn-sm btn-success py-2 schedule-update-btn\" data-id=\"%d\">수정</a> " +
+                    "<a href=\"/schedule/modify?id=%d\" class=\"btn btn-sm btn-success py-2 schedule-update-btn mx-2\" data-id=\"%d\">수정</a> " +
                     "<button type=\"button\" onclick=\"deleteSchedule(%d)\" class=\"btn btn-sm btn-outline-danger py-2 schedule-delete-btn\" data-id=\"%d\">삭제</button>",
                     schedule.getId(), schedule.getId(), schedule.getId(), schedule.getId()
             );
@@ -196,6 +215,7 @@ public class ScheduleController implements Controller {
         model.put("content", schedule.getContent());
         model.put("start", DateUtils.toDateTimeLocal(schedule.getStartDateTime()));
         model.put("end", DateUtils.toDateTimeLocal(schedule.getEndDateTime()));
+        model.put("userName", user.getUserName());
 
         response.render("static/schedule/modify.html", model);
     }

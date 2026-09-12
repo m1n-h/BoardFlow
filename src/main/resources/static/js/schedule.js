@@ -138,6 +138,8 @@ export class ScheduleManager {
         }
     }
     async deleteSchedule(scheduleId) {
+        if (!confirm("정말 이 일정을 삭제하시겠습니까?"))
+            return;
         try {
             const response = await fetch(`/schedule/delete?id=${scheduleId}`, {
                 method: 'POST',
@@ -147,7 +149,7 @@ export class ScheduleManager {
             });
             if (response.ok) {
                 alert('일정이 삭제되었습니다.');
-                this.navigate('/schedule/list');
+                window.location.href = '/schedule/list';
             }
             else {
                 alert('일정 삭제 권한이 없거나 오류가 발생했습니다.');

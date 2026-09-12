@@ -165,12 +165,11 @@ export async function deleteArticle(articleId: number): Promise<void> {
     if (!confirm("정말 이 게시글을 삭제하시겠습니까?")) return;
 
     try {
-        const response = await fetch("/board/delete", {
+        const response = await fetch(`/board/delete?id=${articleId}`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: `id=${articleId}`
+                "X-Requested-With": "XMLHttpRequest"
+            }
         });
 
         if (response.status === 401) {
@@ -194,7 +193,7 @@ export async function deleteArticle(articleId: number): Promise<void> {
 }
 
 function renderMainContent(html: string): void {
-    const contentContainer = document.querySelector("#main-content .container");
+    const contentContainer = document.getElementById("main-content");
     if (contentContainer) {
         contentContainer.innerHTML = html;
     } else {

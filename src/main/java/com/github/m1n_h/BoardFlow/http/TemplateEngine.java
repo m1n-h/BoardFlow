@@ -81,7 +81,7 @@ public class TemplateEngine {
 
         if (nav != null) {
             if (loginUser != null && "admin".equals(loginUser.getUserId())) {
-                String adminBtn = "<button type=\"button\" id=\"userListBtn\" class=\"btn btn-sm btn-outline-warning ms-2\">회원목록</button>";
+                String adminBtn = "<button type=\"button\" id=\"userListBtn\" class=\"btn btn-sm btn-outline-secondary ms-2\">회원목록</button>";
                 nav = nav.replace("{{adminNav}}", adminBtn);
             } else {
                 nav = nav.replace("{{adminNav}}", "");
