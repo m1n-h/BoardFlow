@@ -51,6 +51,7 @@ public class Router {
         mappings.put("/board/write.html", boardController);
         mappings.put("/board/detail", boardController);
         mappings.put("/board/detail.html", boardController);
+        mappings.put("/board/delete", boardController);
 
         mappings.put("/schedule", scheduleController);
         mappings.put("/schedule/list", scheduleController);
@@ -61,6 +62,7 @@ public class Router {
         mappings.put("/schedule/write.html", scheduleController);
         mappings.put("/schedule/detail", scheduleController);
         mappings.put("/schedule/detail.html", scheduleController);
+        mappings.put("/schedule/delete", scheduleController);
     }
 
     public static void route(HttpRequest request, HttpResponse response) throws IOException {

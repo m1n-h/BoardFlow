@@ -11,6 +11,8 @@ export class ScheduleManager {
     constructor() {
         this.mainContentArea = document.getElementById('main-content');
         this.initEventListeners();
+
+        (window as any).deleteSchedule = this.deleteSchedule.bind(this);
     }
 
     private initEventListeners(): void {
@@ -166,11 +168,12 @@ export class ScheduleManager {
         if (!confirm("정말 이 일정을 삭제하시겠습니까?")) return;
 
         try {
-            const response = await fetch(`/schedule/delete?id=${scheduleId}`, {
+            const response = await fetch(`/schedule/delete`, {
                 method: 'POST',
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
-                }
+                },
+                body: `id=${scheduleId}`
             });
 
             if (response.ok) {

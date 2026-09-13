@@ -51,7 +51,7 @@ public class BoardController implements Controller {
             ) {
                 updateArticle(request, response);
             } else if ("POST".equalsIgnoreCase(method) &&
-                    ("/delete".equals(path) || "/board/delete".equals(path))
+                    ("/delete".startsWith(path) || "/board/delete".startsWith(path))
             ) {
                 deleteArticle(request, response);
             }
@@ -136,7 +136,13 @@ public class BoardController implements Controller {
             return;
         }
 
-        response.render("static/board/write.html", new HashMap<>());
+        String sessionId = request.getCookie("sid");
+        User user = (sessionId != null) ? (User) SessionManager.getSession(sessionId) : null;
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", user.getUserName());
+
+        response.render("static/board/write.html", model);
     }
 
     private void createArticle(HttpRequest request, HttpResponse response) throws IOException {
@@ -187,6 +193,7 @@ public class BoardController implements Controller {
         model.put("id", article.getId());
         model.put("title", article.getTitle());
         model.put("content", article.getContent());
+        model.put("userName", user.getUserName());
 
         response.render("static/board/modify.html", model);
     }

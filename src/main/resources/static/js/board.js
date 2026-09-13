@@ -39,7 +39,8 @@ export async function createArticle(form) {
         }
         if (response.ok) {
             alert("게시글이 등록되었습니다.");
-            loadArticleList();
+            //loadArticleList();
+            window.location.href = "/board/list";
         }
     }
     catch (error) {
@@ -51,7 +52,8 @@ export async function loadArticleDetail(articleId) {
         const response = await fetch(`/board/detail?id=${articleId}`);
         if (response.status === 404) {
             alert("존재하지 않은 게시글 입니다.");
-            loadArticleList();
+            //loadArticleList();
+            window.location.href = "/board/list";
             return;
         }
         if (!response.ok)
@@ -132,7 +134,8 @@ export async function updateArticle(form) {
                 loadArticleDetail(Number(articleId));
             }
             else {
-                loadArticleList();
+                //loadArticleList();
+                window.location.href = "/board/lists";
             }
         }
     }
@@ -144,11 +147,12 @@ export async function deleteArticle(articleId) {
     if (!confirm("정말 이 게시글을 삭제하시겠습니까?"))
         return;
     try {
-        const response = await fetch(`/board/delete?id=${articleId}`, {
+        const response = await fetch(`/board/delete`, {
             method: "POST",
             headers: {
                 "X-Requested-With": "XMLHttpRequest"
-            }
+            },
+            body: `id=${articleId}`
         });
         if (response.status === 401) {
             alert("로그인이 필요합니다.");
@@ -162,7 +166,8 @@ export async function deleteArticle(articleId) {
         }
         if (response.ok) {
             alert("삭제되었습니다.");
-            loadArticleList();
+            //loadArticleList();
+            window.location.href = "/board/list";
         }
     }
     catch (error) {
@@ -178,3 +183,4 @@ function renderMainContent(html) {
         console.error("Main container element not found in DOM");
     }
 }
+window.deleteArticle = deleteArticle;

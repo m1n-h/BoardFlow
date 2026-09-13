@@ -50,7 +50,7 @@ public class ScheduleController implements Controller {
                     updateSchedule(request, response);
                 }
             } else if ("POST".equalsIgnoreCase(method) &&
-                    ("/delete".equals(path) || "/schedule/delete".equals(path))
+                    ("/delete".startsWith(path) || "/schedule/delete".startsWith(path))
             ) {
                 deleteSchedule(request, response);
             }
