@@ -26,7 +26,7 @@ public class ScheduleController implements Controller {
         try {
             if ("GET".equalsIgnoreCase(method) &&
                     ("/list".equals(path) || "/schedule/list".equals(path)
-                            || "/list.html".equals(path) || "/schedule/list.html".equals(path))
+                    || "/list.html".equals(path) || "/schedule/list.html".equals(path))
             ) {
                 showList(request, response);
             } else if ("GET".equalsIgnoreCase(method) &&
@@ -50,7 +50,7 @@ public class ScheduleController implements Controller {
                     updateSchedule(request, response);
                 }
             } else if ("POST".equalsIgnoreCase(method) &&
-                    ("/delete".startsWith(path) || "/schedule/delete".startsWith(path))
+                    ("/delete".equals(path) || "/schedule/delete".equals(path))
             ) {
                 deleteSchedule(request, response);
             }
@@ -66,23 +66,6 @@ public class ScheduleController implements Controller {
 
         String sessionId = request.getCookie("sid");
         User user = (User) SessionManager.getSession(sessionId);
-
-        List<Map<String, Object>> scheduleList = new ArrayList<>();
-        for (Schedule s : schedules) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("id", s.getId());
-            map.put("title", s.getTitle());
-            map.put("content", s.getContent());
-
-            String startStr = (s.getStartDateTime() != null) ? DateUtils.toDisplayString(s.getStartDateTime()) : "";
-            String endStr = (s.getEndDateTime() != null) ? DateUtils.toDisplayString(s.getEndDateTime()) : "";
-
-            map.put("start", startStr);
-            map.put("end", endStr);
-            map.put("writer", s.getWriter());
-
-            scheduleList.add(map);
-        }
 
         Map<String, Object> model = new HashMap<>();
         model.put("schedule", schedules);
@@ -152,7 +135,12 @@ public class ScheduleController implements Controller {
             return;
         }
 
-        response.render("static/schedule/write.html", new HashMap<>());
+        User user = getLoginUser(request);
+
+        Map<String, Object> model = new HashMap<>();
+        model.put("userName", user.getUserName());
+
+        response.render("static/schedule/write.html", model);
     }
 
     private void createSchedule(HttpRequest request, HttpResponse response) throws IOException {
@@ -268,7 +256,14 @@ public class ScheduleController implements Controller {
             return;
         }
 
-        Long scheduleId = Long.parseLong(request.getParam("id"));
+        String idParam = request.getParam("id");
+        if (idParam == null || idParam.isBlank()) {
+            response.setStatus(400);
+            response.sendHtml("BAD REQUEST");
+            return;
+        }
+
+        Long scheduleId = Long.parseLong(idParam);
         Schedule schedule = DataBase.findScheduleById(scheduleId);
 
         if (schedule == null) {
@@ -288,7 +283,9 @@ public class ScheduleController implements Controller {
 
         DataBase.deleteSchedule(scheduleId);
 
-        response.sendRedirect("/schedule/list");
+        //response.sendRedirect("/schedule/list");
+        response.setStatus(200);
+        response.sendHtml("OK");
     }
 
     private boolean isLoggedIn(HttpRequest request) { return getLoginUser(request) != null; }

@@ -10,6 +10,8 @@ public class Schedule {
     private String content;
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
+    private String start;
+    private String end;
     private String writer;
     private boolean completed;
 
@@ -21,6 +23,9 @@ public class Schedule {
         this.endDateTime = endDateTime;
         this.writer = writer;
         this.completed = false;
+
+        this.start = (startDateTime != null) ? DateUtils.toDisplayString(startDateTime) : "";
+        this.end = (endDateTime != null) ? DateUtils.toDisplayString(endDateTime) : "";
     }
 
     public Long getId() { return id; }
@@ -38,8 +43,8 @@ public class Schedule {
     public LocalDateTime getEndDateTime() { return endDateTime; }
     public void setEndDateTime(LocalDateTime endDateTime) { this.endDateTime = endDateTime; }
 
-    public String getStart() { return DateUtils.toDisplayString(this.startDateTime); }
-    public String getEnd() { return DateUtils.toDisplayString(this.endDateTime); }
+    public String getStart() { return this.start; }
+    public String getEnd() { return this.end; }
 
     public String getWriter() { return writer; }
     public void setWriter(String writer) { this.writer = writer; }

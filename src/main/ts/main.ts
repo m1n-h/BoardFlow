@@ -10,7 +10,15 @@ import { fetchArticles,
     loadArticleUpdateForm,
     updateArticle,
     deleteArticle } from "./board.js";
-//import {  } from "./schedule.js";
+import { fetchSchedules,
+    loadScheduleList,
+    loadScheduleDetail,
+    loadScheduleForm,
+    createSchedule,
+    loadScheduleUpdateForm,
+    updateSchedule,
+    deleteSchedule
+} from "./schedule.js";
 import { AuthModal } from "./authModal.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -34,24 +42,13 @@ document.addEventListener("DOMContentLoaded", () => {
         loadUserList();
     });
 
-    if (document.getElementById("boardList")) {
-        fetchArticles().then(articles => {
-            console.log(articles);
-        });
-    }
-
     new AuthModal();
 });
 
 document.addEventListener("click", (e: MouseEvent) => {
     const target = e.target as HTMLElement;
 
-    if (target.closest("#writeBtn")) {
-        e.preventDefault();
-        loadArticleForm();
-        return;
-    }
-
+    // board
     const articleLink = target.closest<HTMLAnchorElement>(".article-detail-link");
     if (articleLink) {
         e.preventDefault();
@@ -60,19 +57,44 @@ document.addEventListener("click", (e: MouseEvent) => {
         return;
     }
 
-    const updateBtn = target.closest<HTMLAnchorElement>(".article-update-btn");
-    if (updateBtn) {
+    const articleUpdateBtn = target.closest<HTMLAnchorElement>(".article-update-btn");
+    if (articleUpdateBtn) {
         e.preventDefault();
-        const articleId = updateBtn.dataset.id;
+        const articleId = articleUpdateBtn.dataset.id;
         if (articleId) loadArticleUpdateForm(Number(articleId));
         return;
     }
 
-    const deleteBtn = target.closest<HTMLAnchorElement>(".article-delete-btn");
-    if (deleteBtn) {
+    const articleDeleteBtn = target.closest<HTMLAnchorElement>(".article-delete-btn");
+    if (articleDeleteBtn) {
         e.preventDefault();
-        const articleId = deleteBtn.dataset.id;
+        const articleId = articleDeleteBtn.dataset.id;
         if (articleId) deleteArticle(Number(articleId));
+        return;
+    }
+
+    // schedule
+    const scheduleLink = target.closest<HTMLAnchorElement>(".schedule-detail-link");
+    if (scheduleLink) {
+        e.preventDefault();
+        const scheduleId = scheduleLink.dataset.id;
+        if (scheduleId) loadScheduleDetail(Number(scheduleId));
+        return;
+    }
+
+    const scheduleUpdateBtn = target.closest<HTMLAnchorElement>(".schedule-update-btn");
+    if (scheduleUpdateBtn) {
+        e.preventDefault();
+        const scheduleId = scheduleUpdateBtn.dataset.id;
+        if (scheduleId) loadScheduleUpdateForm(Number(scheduleId));
+        return;
+    }
+
+    const scheduleDeleteBtn = target.closest<HTMLElement>(".schedule-delete-btn");
+    if (scheduleDeleteBtn) {
+        e.preventDefault();
+        const scheduleId = scheduleDeleteBtn.dataset.id;
+        if (scheduleId) deleteSchedule(Number(scheduleId));
         return;
     }
 });
@@ -85,5 +107,11 @@ document.addEventListener("submit", (e: SubmitEvent) => {
     } else if (form.matches("#articleUpdateForm")) {
         e.preventDefault();
         updateArticle(form);
+    } else if (form.matches("#scheduleCreateForm")) {
+        e.preventDefault();
+        createSchedule(form);
+    } else if (form.matches("#scheduleUpdateForm")) {
+        e.preventDefault();
+        updateSchedule(form);
     }
 });

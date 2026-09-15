@@ -1,168 +1,183 @@
-export class ScheduleManager {
-    constructor() {
-        this.mainContentArea = document.getElementById('main-content');
-        this.initEventListeners();
-        window.deleteSchedule = this.deleteSchedule.bind(this);
+export async function fetchSchedules() {
+    const response = await fetch("/api/schedules");
+    if (!response.ok)
+        return [];
+    return await response.json();
+}
+export async function loadScheduleList() {
+    try {
+        const response = await fetch("/schedule/list");
+        if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+        const html = await response.text();
+        renderMainContent(html);
     }
-    initEventListeners() {
-        document.addEventListener('click', (event) => {
-            const target = event.target;
-            const listLink = target.closest('.schedule-list-link');
-            if (listLink) {
-                event.preventDefault();
-                this.navigate('/schedule/list');
-                return;
-            }
-            const writeLink = target.closest('.schedule-write-link');
-            if (writeLink) {
-                event.preventDefault();
-                this.navigate('/schedule/write');
-                return;
-            }
-            const detailLink = target.closest('.schedule-detail-link');
-            if (detailLink) {
-                event.preventDefault();
-                const scheduleId = detailLink.dataset.id || detailLink.getAttribute('href')?.split('id=')[1];
-                if (scheduleId) {
-                    this.navigate(`/schedule/detail?id=${scheduleId}`);
-                }
-                return;
-            }
-            const modifyLink = target.closest('.schedule-modify-link');
-            if (modifyLink) {
-                event.preventDefault();
-                const scheduleId = modifyLink.dataset.id || modifyLink.getAttribute('href')?.split('id=')[1];
-                if (scheduleId) {
-                    this.navigate(`/schedule/modify?id=${scheduleId}`);
-                }
-                return;
-            }
-            const deleteBtn = target.closest('.schedule-delete-btn');
-            if (deleteBtn) {
-                event.preventDefault();
-                const scheduleId = deleteBtn.dataset.id;
-                if (scheduleId && confirm('정말 이 일정을 삭제하시겠습니까?')) {
-                    this.deleteSchedule(scheduleId);
-                }
-                return;
-            }
-        });
-        document.addEventListener('submit', (event) => {
-            const form = event.target;
-            if (form.id === 'schedule-write-form') {
-                event.preventDefault();
-                this.handleWriteSubmit(form);
-            }
-            if (form.id === 'schedule-modify-form') {
-                event.preventDefault();
-                this.handleModifySubmit(form);
-            }
-        });
-    }
-    async navigate(url) {
-        try {
-            const response = await fetch(url, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const html = await response.text();
-            if (this.mainContentArea) {
-                this.mainContentArea.innerHTML = html;
-                window.history.pushState({}, '', url);
-            }
-        }
-        catch (error) {
-            console.error('Schedule Navigation Error:', error);
-            alert('페이지를 불러오는 중 오류가 발생했습니다.');
-        }
-    }
-    async handleWriteSubmit(form) {
-        const formData = new FormData(form);
-        const params = new URLSearchParams();
-        formData.forEach((value, key) => {
-            params.append(key, value.toString());
-        });
-        try {
-            const response = await fetch('/schedule/write', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: params.toString()
-            });
-            if (response.ok) {
-                alert('일정이 성공적으로 등록되었습니다.');
-                this.navigate('/schedule/list');
-            }
-            else {
-                const errorText = await response.text();
-                alert(`일정 등록 실패: ${errorText || '오류가 발생했습니다.'}`);
-            }
-        }
-        catch (error) {
-            console.error('Schedule Write Error:', error);
-            alert('일정 등록 요청 중 네트워크 오류가 발생했습니다.');
-        }
-    }
-    async handleModifySubmit(form) {
-        const formData = new FormData(form);
-        const scheduleId = formData.get('id');
-        const params = new URLSearchParams();
-        formData.forEach((value, key) => {
-            params.append(key, value.toString());
-        });
-        try {
-            const response = await fetch(`/schedule/modify?id=${scheduleId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: params.toString()
-            });
-            if (response.ok) {
-                alert('일정이 수정되었습니다.');
-                this.navigate(`/schedule/detail?id=${scheduleId}`);
-            }
-            else {
-                alert('일정 수정에 실패했습니다.');
-            }
-        }
-        catch (error) {
-            console.error('Schedule Modify Error:', error);
-            alert('일정 수정 요청 중 오류가 발생했습니다.');
-        }
-    }
-    async deleteSchedule(scheduleId) {
-        if (!confirm("정말 이 일정을 삭제하시겠습니까?"))
-            return;
-        try {
-            const response = await fetch(`/schedule/delete`, {
-                method: 'POST',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: `id=${scheduleId}`
-            });
-            if (response.ok) {
-                alert('일정이 삭제되었습니다.');
-                window.location.href = '/schedule/list';
-            }
-            else {
-                alert('일정 삭제 권한이 없거나 오류가 발생했습니다.');
-            }
-        }
-        catch (error) {
-            console.error('Schedule Delete Error:', error);
-            alert('일정 삭제 요청 중 오류가 발생했습니다.');
-        }
+    catch (error) {
+        console.error("Failed to load schedule list: ", error);
     }
 }
-document.addEventListener('DOMContentLoaded', () => {
-    new ScheduleManager();
-});
+export async function createSchedule(form) {
+    const formData = new FormData(form);
+    const bodyParams = new URLSearchParams(formData);
+    try {
+        const response = await fetch("/schedule/write", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: bodyParams.toString()
+        });
+        if (response.status === 401) {
+            alert("로그인이 필요합니다.");
+            if (typeof openLoginModal === "function")
+                openLoginModal();
+            return;
+        }
+        if (response.status === 400) {
+            alert("필수 정보를 모두 입력해주세요.");
+            return;
+        }
+        if (response.ok) {
+            alert("일정이 등록되었습니다.");
+            window.location.href = "/schedule/list";
+        }
+    }
+    catch (error) {
+        console.error("Failed to create schedule: ", error);
+    }
+}
+export async function loadScheduleDetail(scheduleId) {
+    try {
+        const response = await fetch(`/schedule/detail?id=${scheduleId}`);
+        if (response.status === 404) {
+            alert("존재하지 않는 일정입니다.");
+            window.location.href = "/schedule/list";
+            return;
+        }
+        if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+        const html = await response.text();
+        renderMainContent(html);
+    }
+    catch (error) {
+        console.error("Failed to load schedule detail: ", error);
+    }
+}
+export async function loadScheduleForm() {
+    try {
+        const response = await fetch("/schedule/form");
+        if (response.status === 401) {
+            alert("일정을 작성하려면 로그인이 필요합니다.");
+            if (typeof openLoginModal === "function") {
+                openLoginModal();
+            }
+            return;
+        }
+        if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+        const html = await response.text();
+        renderMainContent(html);
+    }
+    catch (error) {
+        console.error("Failed to load schedule form: ", error);
+    }
+}
+export async function loadScheduleUpdateForm(scheduleId) {
+    try {
+        const response = await fetch(`/schedule/modify?id=${scheduleId}`);
+        if (response.status === 401) {
+            alert("로그인이 필요합니다.");
+            if (typeof openLoginModal === "function")
+                openLoginModal();
+            return;
+        }
+        if (response.status === 403) {
+            alert("수정 권한이 없습니다.");
+            return;
+        }
+        if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
+        const html = await response.text();
+        renderMainContent(html);
+    }
+    catch (error) {
+        console.error("Failed to load schedule update: ", error);
+    }
+}
+export async function updateSchedule(form) {
+    const formData = new FormData(form);
+    const bodyParams = new URLSearchParams(formData);
+    try {
+        const response = await fetch("/schedule/modify", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: bodyParams.toString()
+        });
+        if (response.status === 401) {
+            alert("로그인이 필요합니다.");
+            if (typeof openLoginModal === "function")
+                openLoginModal();
+            return;
+        }
+        if (response.status === 403) {
+            alert("수정 권한이 없습니다.");
+            return;
+        }
+        if (response.ok) {
+            alert("일정이 수정되었습니다.");
+            const scheduleId = formData.get("id");
+            if (scheduleId) {
+                loadScheduleDetail(Number(scheduleId));
+            }
+            else {
+                window.location.href = "/schedule/list";
+            }
+        }
+    }
+    catch (error) {
+        console.error("Failed to update schedule: ", error);
+    }
+}
+export async function deleteSchedule(scheduleId) {
+    if (!confirm("정말 이 일정을 삭제하시겠습니까?"))
+        return;
+    try {
+        const response = await fetch(`/schedule/delete`, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `id=${scheduleId}`
+        });
+        if (response.status === 401) {
+            alert("로그인이 필요합니다.");
+            if (typeof openLoginModal === "function")
+                openLoginModal();
+            return;
+        }
+        if (response.status === 403) {
+            alert("삭제 권한이 없습니다.");
+            return;
+        }
+        if (response.ok) {
+            alert("삭제되었습니다.");
+            window.location.href = "/schedule/list";
+        }
+    }
+    catch (error) {
+        console.error("Failed to delete schedule: ", error);
+    }
+}
+function renderMainContent(html) {
+    const contentContainer = document.getElementById("main-content");
+    if (contentContainer) {
+        contentContainer.innerHTML = html;
+    }
+    else {
+        console.error("Main container element not found in DOM");
+    }
+}
+window.deleteSchedule = deleteSchedule;
