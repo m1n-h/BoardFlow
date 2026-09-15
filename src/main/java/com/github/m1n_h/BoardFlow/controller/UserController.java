@@ -98,10 +98,10 @@ public class UserController implements Controller {
         String email = request.getParam("user-email");
         String domain = request.getParam("user-domain");
 
-        if (domain == null || domain.trim().isEmpty() || "etc".equals(domain)) domain = request.getParam("etc-domain");
+        if (email == null) email = "";
         if (domain == null) domain = "";
 
-        String userEmail = (email != null ? email : "") + "@" + domain;
+        String userEmail = email + "@" + domain;
 
         User user = new User(userId, userPw, userName, userEmail);
         DataBase.addUser(user);

@@ -69,7 +69,7 @@ public class ScheduleController implements Controller {
 
         Map<String, Object> model = new HashMap<>();
         model.put("schedule", schedules);
-        model.put("userName", user.getUserName());
+        model.put("userName", (user != null) ? user.getUserName() : "");
 
         response.render("static/schedule/list.html", model);
     }

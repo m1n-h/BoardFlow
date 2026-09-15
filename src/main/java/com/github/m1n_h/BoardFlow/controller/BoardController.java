@@ -70,7 +70,7 @@ public class BoardController implements Controller {
 
         Map<String, Object> model = new HashMap<>();
         model.put("article", articles);
-        model.put("userName", user.getUserName());
+        model.put("userName", (user != null) ? user.getUserName() : "");
 
         response.render("static/board/list.html", model);
     }
